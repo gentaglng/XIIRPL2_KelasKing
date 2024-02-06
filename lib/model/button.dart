@@ -2,28 +2,41 @@ import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {
   final String button;
-  Button({required this.button});
+  Color color;
+  Color shadow;
+  Button({
+    required this.button,
+    required this.color,
+    required this.shadow,
+  });
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    return Ink(
+    return Container(
       width: width,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(width / 20),
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [Color(0xff61F4DE), Color(0xff6E78FF)])),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(width / 20),
-        onTap: () {},
-        child: Padding(
-          padding: EdgeInsets.all(width / 20),
-          child: Text(
-            button,
-            style: TextStyle(color: Colors.white, fontSize: width / 20),
-            textAlign: TextAlign.center,
+          color: color,
+          boxShadow: [
+            BoxShadow(
+                color: shadow.withOpacity(0.8),
+                spreadRadius: 2,
+                blurRadius: 2,
+                offset: Offset(0, 1))
+          ]),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(width / 20),
+          onTap: () {},
+          child: Padding(
+            padding: EdgeInsets.all(15),
+            child: Text(
+              button,
+              style: TextStyle(color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),

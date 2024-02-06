@@ -3,24 +3,20 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class Txt extends StatelessWidget {
   final String txt;
-  var size;
+
   var weight;
-  var left;
+  Color color;
   Txt({
     required this.txt,
-    required this.left,
-    required this.size,
     required this.weight,
+    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: left),
-      child: Text(
-        txt,
-        style: TextStyle(fontSize: size, fontWeight: weight),
-      ),
+    return Text(
+      txt,
+      style: TextStyle(fontWeight: weight, color: color),
     );
   }
 }

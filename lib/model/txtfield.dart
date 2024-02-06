@@ -12,18 +12,21 @@ class TxtField extends StatelessWidget {
         TextFormField(
           cursorColor: Colors.black,
           decoration: InputDecoration(
-              contentPadding: EdgeInsets.only(
-                  left: width / 20, top: width / 20, bottom: width / 20),
+              prefixIcon: Padding(
+                padding: EdgeInsets.only(right: width / 30),
+                child: Icon(
+                  Icons.email,
+                  color: Colors.grey,
+                ),
+              ),
+              prefixIconConstraints: BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
               hintText: hint,
-              hintStyle: TextStyle(fontSize: width / 20),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(width / 20),
-                  borderSide: BorderSide(color: Colors.grey, width: 1)),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(width / 20),
-                  borderSide: BorderSide(color: Colors.black, width: 1))),
-          style: TextStyle(fontSize: width / 20),
-        ),
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black))),
+        )
       ],
     );
   }
@@ -43,42 +46,42 @@ class _TxtPwState extends State<TxtPw> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return TextFormField(
-        obscureText: _obscure,
-        cursorColor: Colors.black,
-        decoration: InputDecoration(
-            contentPadding: EdgeInsets.only(
-                left: width / 20, top: width / 20, bottom: width / 20),
-            suffixIcon: InkWell(
+      obscureText: _obscure,
+      cursorColor: Colors.black,
+      decoration: InputDecoration(
+          prefixIcon: Padding(
+            padding: EdgeInsets.only(right: width / 30),
+            child: Icon(
+              Icons.lock,
+              color: Colors.grey,
+            ),
+          ),
+          suffixIcon: Padding(
+            padding: EdgeInsets.only(right: width / 50),
+            child: InkWell(
                 onTap: () {
                   setState(() {
                     _obscure = !_obscure;
                   });
                 },
                 child: _obscure
-                    ? Padding(
-                        padding: EdgeInsets.symmetric(horizontal: width / 20),
-                        child: Icon(
-                          Icons.visibility_off,
-                          color: Color(0xff6E78FF),
-                          size: width / 16,
-                        ),
-                      )
-                    : Padding(
-                        padding: EdgeInsets.symmetric(horizontal: width / 20),
-                        child: Icon(
-                          Icons.visibility,
-                          color: Color(0xff6E78FF),
-                          size: width / 16,
-                        ),
+                    ? Icon(Icons.visibility_off, color: Colors.grey)
+                    : Icon(
+                        Icons.visibility,
+                        color: Colors.grey,
                       )),
-            hintText: widget.hint,
-            hintStyle: TextStyle(fontSize: width / 20),
-            enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(width / 20),
-                borderSide: BorderSide(color: Colors.grey, width: 1)),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(width / 20),
-                borderSide: BorderSide(color: Colors.black, width: 1))),
-        style: TextStyle(fontSize: width / 20));
+          ),
+          prefixIconConstraints: BoxConstraints(
+            minWidth: 0,
+            minHeight: 0,
+          ),
+          suffixIconConstraints: BoxConstraints(
+            minWidth: 0,
+            minHeight: 0,
+          ),
+          hintText: widget.hint,
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.black))),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kelas_king/model/bg.dart';
 import 'package:kelas_king/model/button.dart';
 import 'package:kelas_king/model/txt.dart';
 import 'package:kelas_king/model/txtfield.dart';
@@ -10,35 +11,54 @@ class AuthLogin extends StatelessWidget {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ListView(
+        body: Stack(
+      children: [
+        ClipRRect(
+            borderRadius:
+                BorderRadius.vertical(bottom: Radius.circular(width / 15)),
+            child: Image.asset(
+              'images/bg1.png',
+            )),
+        ListView(
           children: [
-            Form(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Txt(
-                      txt: 'Email',
-                      left: width / 40,
-                      size: width / 22,
-                      weight: FontWeight.normal),
-                  TxtField(
-                    hint: 'Enter your email',
-                  ),
-                  Txt(
-                      txt: 'Password',
-                      left: width / 40,
-                      size: width / 22,
-                      weight: FontWeight.normal),
-                  TxtPw(hint: 'Enter your password'),
-                  Button(button: 'Sign In'),
-                ],
-              ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                  horizontal: width / 15, vertical: width / 2),
+              child: Bg(
+                  child: Padding(
+                padding: EdgeInsets.all(width / 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    TxtField(hint: 'Enter your Email'),
+                    TxtPw(hint: 'Enter your password'),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: width / 20),
+                      child: Txt(
+                          txt: 'Forgot password?',
+                          weight: FontWeight.normal,
+                          color: Colors.black),
+                    ),
+                    Button(
+                      button: 'Sign In',
+                      color: Color(0xff85CBCB),
+                      shadow: Color(0xffA8DEE0),
+                    ),
+                    Divider(
+                      color: Colors.grey,
+                    ),
+                    Button(
+                      button: 'Sign Up',
+                      color: Color(0xffFBC78D),
+                      shadow: Color(0xffF9E2AE),
+                    ),
+                  ],
+                ),
+              )),
             ),
           ],
-        ),
-      ),
-    );
+        )
+      ],
+    ));
   }
 }
