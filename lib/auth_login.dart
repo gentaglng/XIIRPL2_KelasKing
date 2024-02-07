@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kelas_king/auth_forgotpw.dart';
+import 'package:kelas_king/auth_register.dart';
+import 'package:kelas_king/bnb.dart';
 import 'package:kelas_king/model/bg.dart';
 import 'package:kelas_king/model/button.dart';
 import 'package:kelas_king/model/txt.dart';
@@ -10,47 +13,80 @@ class AuthLogin extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
+    var height = MediaQuery.of(context).size.height;
     return Scaffold(
         body: Stack(
       children: [
-        ClipRRect(
-            borderRadius:
-                BorderRadius.vertical(bottom: Radius.circular(width / 15)),
-            child: Image.asset(
-              'images/bg1.png',
-            )),
+        Image.asset(
+          'images/bg2.png',
+          width: width,
+          height: height,
+          fit: BoxFit.cover,
+        ),
         ListView(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: width / 15, vertical: width / 2),
+              padding: EdgeInsets.only(
+                  left: width / 15, right: width / 15, top: width / 1.5),
               child: Bg(
                   child: Padding(
                 padding: EdgeInsets.all(width / 15),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    TxtField(hint: 'Enter your Email'),
+                    TxtSub(txt: 'Sign in'),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(top: width / 30, bottom: width / 50),
+                      child: TxtField(
+                        hint: 'Enter your email',
+                        icon: Icon(
+                          Icons.email,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
                     TxtPw(hint: 'Enter your password'),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: width / 20),
-                      child: Txt(
-                          txt: 'Forgot password?',
-                          weight: FontWeight.normal,
-                          color: Colors.black),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => AuthForgotpw()));
+                              },
+                              child: TxtSmall(txt: 'Forgot password?')),
+                        ],
+                      ),
                     ),
                     Button(
                       button: 'Sign In',
                       color: Color(0xff85CBCB),
                       shadow: Color(0xffA8DEE0),
+                      nav: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => Bnb()));
+                      },
                     ),
-                    Divider(
-                      color: Colors.grey,
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: width / 40),
+                      child: Divider(
+                        color: Colors.grey,
+                      ),
                     ),
                     Button(
                       button: 'Sign Up',
                       color: Color(0xffFBC78D),
                       shadow: Color(0xffF9E2AE),
+                      nav: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => AuthRegister()));
+                      },
                     ),
                   ],
                 ),

@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 
 class TxtField extends StatelessWidget {
   final String hint;
-  TxtField({required this.hint});
+  Icon icon;
+  TxtField({
+    required this.hint,
+    required this.icon,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -13,12 +17,7 @@ class TxtField extends StatelessWidget {
           cursorColor: Colors.black,
           decoration: InputDecoration(
               prefixIcon: Padding(
-                padding: EdgeInsets.only(right: width / 30),
-                child: Icon(
-                  Icons.email,
-                  color: Colors.grey,
-                ),
-              ),
+                  padding: EdgeInsets.only(right: width / 30), child: icon),
               prefixIconConstraints: BoxConstraints(
                 minWidth: 0,
                 minHeight: 0,
@@ -82,6 +81,37 @@ class _TxtPwState extends State<TxtPw> {
           hintText: widget.hint,
           focusedBorder: UnderlineInputBorder(
               borderSide: BorderSide(color: Colors.black))),
+    );
+  }
+}
+
+class Search extends StatelessWidget {
+  const Search({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: TextField(
+        cursorColor: Colors.black,
+        decoration: InputDecoration(
+            contentPadding: EdgeInsets.only(left: 15),
+            hintText: 'Search',
+            suffixIcon: Icon(
+              Icons.search,
+              color: Colors.grey,
+            ),
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(width / 20),
+                borderSide: BorderSide(
+                  color: Colors.grey,
+                )),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(width / 20),
+              borderSide: BorderSide(color: Colors.grey),
+            )),
+      ),
     );
   }
 }

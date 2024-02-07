@@ -4,10 +4,12 @@ class Button extends StatelessWidget {
   final String button;
   Color color;
   Color shadow;
+  Function nav;
   Button({
     required this.button,
     required this.color,
     required this.shadow,
+    required this.nav,
   });
 
   @override
@@ -29,7 +31,9 @@ class Button extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(width / 20),
-          onTap: () {},
+          onTap: () {
+            nav();
+          },
           child: Padding(
             padding: EdgeInsets.all(15),
             child: Text(

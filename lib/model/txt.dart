@@ -1,22 +1,44 @@
 import 'package:flutter/material.dart';
 
-// ignore: must_be_immutable
-class Txt extends StatelessWidget {
-  final String txt;
+class TxtSub extends StatelessWidget {
+  String txt;
+  TxtSub({required this.txt});
 
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      txt,
+      style: TextStyle(
+          fontWeight: FontWeight.bold, fontSize: 20, color: Colors.black),
+    );
+  }
+}
+
+class TxtSmall extends StatelessWidget {
+  String txt;
+  TxtSmall({required this.txt});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      txt,
+    );
+  }
+}
+
+class TxtNormal extends StatelessWidget {
+  String txt;
   var weight;
-  Color color;
-  Txt({
+  TxtNormal({
     required this.txt,
     required this.weight,
-    required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
     return Text(
       txt,
-      style: TextStyle(fontWeight: weight, color: color),
+      style: TextStyle(fontSize: 18, fontWeight: weight),
     );
   }
 }
