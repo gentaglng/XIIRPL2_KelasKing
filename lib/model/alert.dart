@@ -6,21 +6,36 @@ import 'package:kelas_king/model/txtfield.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class AlertStudent extends StatelessWidget {
+import 'package:kelas_king/url.dart';
+import 'package:provider/provider.dart';
+
+class AlertStudent extends StatefulWidget {
   Map data;
   AlertStudent({required this.data});
+
+  @override
+  State<AlertStudent> createState() => _AlertStudentState();
+}
+
+class _AlertStudentState extends State<AlertStudent> {
+  String message = '';
   TextEditingController _codeCourse = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
     Future join() async {
-      var response = await http
-          .post(Uri.parse('http://10.212.67.180:8000/api/course/join'), body: {
-        "user_id": data['data'][0]['id'].toString(),
+      var response =
+          await http.post(Uri.parse(currentUrl + 'api/course/join'), body: {
+        "user_id": widget.data['data'][0]['id'].toString(),
         "course_id": _codeCourse.text
       });
+      print(currentUrl);
       Map dataa = json.decode(response.body);
-      print(dataa);
+      setState(() {
+        message = dataa['message'];
+      });
     }
 
     var width = MediaQuery.of(context).size.width;
@@ -35,6 +50,12 @@ class AlertStudent extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               TxtSub(txt: 'Join Course'),
+              message == ''
+                  ? Container()
+                  : Text(
+                      message,
+                      style: TextStyle(color: Colors.red),
+                    ),
               Padding(
                 padding: EdgeInsets.only(top: width / 30, bottom: width / 20),
                 child: TxtField(
@@ -74,9 +95,11 @@ class _AlertTeacherState extends State<AlertTeacher> {
 
   @override
   Widget build(BuildContext context) {
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
     Future add() async {
-      var response = await http
-          .post(Uri.parse('http://10.212.67.180:8000/api/course/add'), body: {
+      var response =
+          await http.post(Uri.parse(currentUrl + 'api/course/add'), body: {
         "nama": _namaCourse.text,
         "instructor_id": widget.data['data'][0]['id'].toString(),
         "role": widget.data['data'][0]['role'],

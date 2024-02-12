@@ -14,24 +14,26 @@ class Bnb extends StatefulWidget {
 }
 
 class _BnbState extends State<Bnb> {
-  int currentIndex = 0;
-  final List<Widget> bodyStudent = [
-    BnbCourse(),
-    BnbAbsen(),
-    BnbTugas(),
-    BnbSetting(),
-  ];
-  final List<Widget> bodyTeacher = [
-    BnbCourseAdmin(),
-  ];
-  void ontap(index) {
-    setState(() {
-      currentIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    int currentIndex = 0;
+    final List<Widget> bodyStudent = [
+      BnbCourse(
+        data: widget.data,
+      ),
+      BnbAbsen(),
+      BnbTugas(),
+      BnbSetting(),
+    ];
+    final List<Widget> bodyTeacher = [
+      BnbCourseAdmin(),
+    ];
+    void ontap(index) {
+      setState(() {
+        currentIndex = index;
+      });
+    }
+
     body() {
       if (widget.data['data'][0]['role'] == 'Student') {
         return bodyStudent[currentIndex];

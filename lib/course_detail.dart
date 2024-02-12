@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:kelas_king/model/button.dart';
 import 'package:kelas_king/model/txt.dart';
 import 'package:kelas_king/model/txtfield.dart';
+import 'package:intl/intl.dart';
 
 class CourseDetail extends StatefulWidget {
-  const CourseDetail({super.key});
+  Map data;
+  CourseDetail({required this.data});
 
   @override
   State<CourseDetail> createState() => _CourseDetailState();
@@ -128,8 +130,46 @@ class _CourseDetailState extends State<CourseDetail> {
     }
   }
 
+  String _timeString = '';
+  String _dateString = '';
+  String _dayString = '';
+
   @override
+  void initState() {
+    super.initState();
+    _getTimeString();
+    _getDateString();
+    _getDayString();
+  }
+
+  void _getTimeString() {
+    final String formattedDateTime =
+        DateFormat('HH:mm:ss').format(DateTime.now());
+    setState(() {
+      _timeString = formattedDateTime;
+    });
+  }
+
+  void _getDateString() {
+    final String formattedDate =
+        DateFormat('dd MMMM yyyy', 'id_ID').format(DateTime.now());
+    setState(() {
+      _dateString = formattedDate;
+    });
+  }
+
+  void _getDayString() {
+    final String formattedDay =
+        DateFormat('EEEE', 'id_ID').format(DateTime.now());
+    setState(() {
+      _dayString = formattedDay;
+    });
+  }
+
   Widget build(BuildContext context) {
+    print(_timeString);
+    print(_dateString);
+    print(_dayString);
     var width = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBar(
@@ -145,7 +185,7 @@ class _CourseDetailState extends State<CourseDetail> {
         ),
         body: ListView(
           children: [
-            TxtSub(txt: 'Mtkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk'),
+            TxtSub(txt: widget.data['nama']),
             Row(
               children: [
                 Judul(txt: 'Absen'),

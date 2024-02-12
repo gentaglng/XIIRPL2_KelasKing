@@ -8,6 +8,9 @@ import 'package:kelas_king/model/txtfield.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:kelas_king/url.dart';
+import 'package:provider/provider.dart';
+
 // ignore: must_be_immutable, use_key_in_widget_constructors
 class AuthRegister extends StatefulWidget {
   @override
@@ -27,9 +30,11 @@ class _AuthRegisterState extends State<AuthRegister> {
 
   @override
   Widget build(BuildContext context) {
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
     Future register() async {
-      var response = await http
-          .post(Uri.parse('http://10.212.67.180:8000/api/register'), body: {
+      var response =
+          await http.post(Uri.parse(currentUrl + 'api/register'), body: {
         "nama": _namaController.text,
         "role": selectedRole,
         "email": _emailController.text,

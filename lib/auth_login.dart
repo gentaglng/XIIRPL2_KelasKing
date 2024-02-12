@@ -7,7 +7,10 @@ import 'package:kelas_king/model/button.dart';
 import 'package:kelas_king/model/txt.dart';
 import 'package:kelas_king/model/txtfield.dart';
 import 'package:http/http.dart' as http;
+import 'package:kelas_king/url.dart';
 import 'dart:convert';
+
+import 'package:provider/provider.dart';
 
 class AuthLogin extends StatelessWidget {
   TextEditingController _emailController = TextEditingController();
@@ -15,12 +18,14 @@ class AuthLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
     Future login() async {
-      var response = await http
-          .post(Uri.parse('http://10.212.67.180:8000/api/login'), body: {
-        "email": _emailController.text,
-        "password": _passwordController.text
-      });
+      var response = await http.post(Uri.parse(currentUrl + 'api/login'),
+          body: {
+            "email": _emailController.text,
+            "password": _passwordController.text
+          });
       Map data = json.decode(response.body);
       print(data);
       Navigator.push(
