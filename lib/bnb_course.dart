@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:kelas_king/course_detail.dart';
 import 'package:kelas_king/model/button.dart';
 import 'package:kelas_king/model/txt.dart';
 import 'package:kelas_king/model/txtfield.dart';
@@ -53,21 +54,7 @@ class BnbCourse extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xffF9E2AE),
-                      borderRadius:
-                          BorderRadius.horizontal(right: Radius.circular(8)),
-                    ),
-                    child: Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      child: TxtNormal(
-                        txt: 'Your Course',
-                        weight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  Judul(txt: 'Your Course'),
                   Padding(
                     padding: EdgeInsets.only(right: 10),
                     child: Ink(
@@ -104,7 +91,12 @@ class BnbCourse extends StatelessWidget {
                   ),
                   itemBuilder: (context, index) {
                     return InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CourseDetail()));
+                      },
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -125,7 +117,7 @@ class BnbCourse extends StatelessWidget {
                                       txt: 'Tessssssssssssssssssssssssssssssss',
                                       weight: FontWeight.bold),
                                 )),
-                          )
+                          ),
                         ],
                       ),
                     );

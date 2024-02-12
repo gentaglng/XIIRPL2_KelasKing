@@ -6,12 +6,27 @@ import 'package:kelas_king/model/bg.dart';
 import 'package:kelas_king/model/button.dart';
 import 'package:kelas_king/model/txt.dart';
 import 'package:kelas_king/model/txtfield.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AuthLogin extends StatelessWidget {
-  const AuthLogin({super.key});
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    Future login() async {
+      var response = await http
+          .post(Uri.parse('http://10.212.67.180:8000/api/login'), body: {
+        "email": _emailController.text,
+        "password": _passwordController.text
+      });
+      Map data = json.decode(response.body);
+      print(data);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => Bnb(data: data)));
+    }
+
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -38,6 +53,7 @@ class AuthLogin extends StatelessWidget {
                       padding:
                           EdgeInsets.only(top: width / 30, bottom: width / 50),
                       child: TxtField(
+                        controller: _emailController,
                         hint: 'Enter your email',
                         icon: Icon(
                           Icons.email,
@@ -45,7 +61,10 @@ class AuthLogin extends StatelessWidget {
                         ),
                       ),
                     ),
-                    TxtPw(hint: 'Enter your password'),
+                    TxtPw(
+                      hint: 'Enter your password',
+                      controller: _passwordController,
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: width / 20),
                       child: Row(
@@ -66,9 +85,8 @@ class AuthLogin extends StatelessWidget {
                       button: 'Sign In',
                       color: Color(0xff85CBCB),
                       shadow: Color(0xffA8DEE0),
-                      nav: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Bnb()));
+                      fun: () async {
+                        login();
                       },
                     ),
                     Padding(
@@ -81,7 +99,7 @@ class AuthLogin extends StatelessWidget {
                       button: 'Sign Up',
                       color: Color(0xffFBC78D),
                       shadow: Color(0xffF9E2AE),
-                      nav: () {
+                      fun: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(

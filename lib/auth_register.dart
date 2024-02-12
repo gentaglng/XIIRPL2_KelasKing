@@ -5,6 +5,8 @@ import 'package:kelas_king/model/bg.dart';
 import 'package:kelas_king/model/button.dart';
 import 'package:kelas_king/model/txt.dart';
 import 'package:kelas_king/model/txtfield.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 // ignore: must_be_immutable, use_key_in_widget_constructors
 class AuthRegister extends StatefulWidget {
@@ -13,12 +15,30 @@ class AuthRegister extends StatefulWidget {
 }
 
 class _AuthRegisterState extends State<AuthRegister> {
-  List item = ['Teacher', 'Student'];
+  TextEditingController _namaController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   bool value = false;
 
+  String? selectedRole;
+
+  List<String> items = ['Teacher', 'Student'];
+
   @override
   Widget build(BuildContext context) {
+    Future register() async {
+      var response = await http
+          .post(Uri.parse('http://10.212.67.180:8000/api/register'), body: {
+        "nama": _namaController.text,
+        "role": selectedRole,
+        "email": _emailController.text,
+        "password": _passwordController.text
+      });
+      Map data = json.decode(response.body);
+      print(data);
+    }
+
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -45,6 +65,7 @@ class _AuthRegisterState extends State<AuthRegister> {
                       padding:
                           EdgeInsets.only(top: width / 30, bottom: width / 50),
                       child: TxtField(
+                        controller: _namaController,
                         hint: 'Kimi no namaewaa?',
                         icon: Icon(
                           Icons.person,
@@ -53,30 +74,41 @@ class _AuthRegisterState extends State<AuthRegister> {
                       ),
                     ),
                     DropdownButtonFormField(
-                        decoration: InputDecoration(
-                            prefixIcon: Padding(
-                                padding: EdgeInsets.only(right: width / 30),
-                                child: Icon(
-                                  Icons.groups_3,
-                                  color: Colors.grey,
-                                )),
-                            prefixIconConstraints: BoxConstraints(
-                              minWidth: 0,
-                              minHeight: 0,
-                            ),
-                            hintText: 'Select role',
-                            focusedBorder: UnderlineInputBorder(
-                                borderSide: BorderSide(color: Colors.black))),
-                        items: item
-                            .map((e) => DropdownMenuItem(
-                                  child: Text(e),
-                                  value: e,
-                                ))
-                            .toList(),
-                        onChanged: (v) {}),
+                      decoration: InputDecoration(
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(right: width / 30),
+                          child: Icon(
+                            Icons.groups_3,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        prefixIconConstraints: BoxConstraints(
+                          minWidth: 0,
+                          minHeight: 0,
+                        ),
+                        hintText: 'Select role',
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.black),
+                        ),
+                      ),
+                      value: selectedRole,
+                      items: items
+                          .map((e) => DropdownMenuItem(
+                                child: Text(e),
+                                value: e,
+                              ))
+                          .toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedRole = newValue as String?;
+                          value = (selectedRole != null);
+                        });
+                      },
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: width / 50),
                       child: TxtField(
+                        controller: _emailController,
                         hint: 'Enter your email',
                         icon: Icon(
                           Icons.email,
@@ -84,36 +116,27 @@ class _AuthRegisterState extends State<AuthRegister> {
                         ),
                       ),
                     ),
-                    TxtPw(hint: 'Enter your password'),
+                    TxtPw(
+                      hint: 'Enter your password',
+                      controller: _passwordController,
+                    ),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: width / 50),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Checkbox(
-                            visualDensity: VisualDensity(horizontal: -4),
-                            activeColor: Color(0xff85CBCB),
-                            value: value,
-                            onChanged: (v) {
-                              setState(() {
-                                value = !value;
-                              });
-                            },
-                            side: BorderSide(color: Colors.grey, width: 1.3),
-                          ),
+                          Check(),
                           TxtSmall(txt: 'I read and accept Terms of Service')
                         ],
                       ),
                     ),
                     Button(
-                      button: 'Sign Up',
-                      color: Color(0xff85CBCB),
-                      shadow: Color(0xffA8DEE0),
-                      nav: () {
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => Bnb()));
-                      },
-                    ),
+                        button: 'Sign Up',
+                        color: Color(0xff85CBCB),
+                        shadow: Color(0xffA8DEE0),
+                        fun: () async {
+                          register();
+                        }),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: width / 40),
                       child: Divider(
@@ -124,7 +147,7 @@ class _AuthRegisterState extends State<AuthRegister> {
                       button: 'Sign In',
                       color: Color(0xffFBC78D),
                       shadow: Color(0xffF9E2AE),
-                      nav: () {
+                      fun: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(

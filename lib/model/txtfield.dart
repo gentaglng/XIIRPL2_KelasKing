@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class TxtField extends StatelessWidget {
   final String hint;
+  final TextEditingController controller;
   Icon icon;
   TxtField({
+    required this.controller,
     required this.hint,
     required this.icon,
   });
@@ -14,6 +16,7 @@ class TxtField extends StatelessWidget {
     return Column(
       children: [
         TextFormField(
+          controller: controller,
           cursorColor: Colors.black,
           decoration: InputDecoration(
               prefixIcon: Padding(
@@ -33,7 +36,11 @@ class TxtField extends StatelessWidget {
 
 class TxtPw extends StatefulWidget {
   final String hint;
-  TxtPw({required this.hint});
+  final TextEditingController controller;
+  TxtPw({
+    required this.controller,
+    required this.hint,
+  });
 
   @override
   State<TxtPw> createState() => _TxtPwState();
@@ -45,6 +52,7 @@ class _TxtPwState extends State<TxtPw> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return TextFormField(
+      controller: widget.controller,
       obscureText: _obscure,
       cursorColor: Colors.black,
       decoration: InputDecoration(

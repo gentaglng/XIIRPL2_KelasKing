@@ -42,3 +42,25 @@ class TxtNormal extends StatelessWidget {
     );
   }
 }
+
+class Judul extends StatelessWidget {
+  final String txt;
+  Judul({required this.txt});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Color(0xffF9E2AE),
+        borderRadius: BorderRadius.horizontal(right: Radius.circular(8)),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        child: TxtNormal(
+          txt: txt,
+          weight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}

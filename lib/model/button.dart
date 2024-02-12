@@ -4,12 +4,12 @@ class Button extends StatelessWidget {
   final String button;
   Color color;
   Color shadow;
-  Function nav;
+  Function fun;
   Button({
     required this.button,
     required this.color,
     required this.shadow,
-    required this.nav,
+    required this.fun,
   });
 
   @override
@@ -32,7 +32,7 @@ class Button extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(width / 20),
           onTap: () {
-            nav();
+            fun();
           },
           child: Padding(
             padding: EdgeInsets.all(15),
@@ -44,6 +44,31 @@ class Button extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class Check extends StatefulWidget {
+  const Check({super.key});
+
+  @override
+  State<Check> createState() => _CheckState();
+}
+
+class _CheckState extends State<Check> {
+  bool value = false;
+  @override
+  Widget build(BuildContext context) {
+    return Checkbox(
+      visualDensity: VisualDensity(horizontal: -4),
+      activeColor: Color(0xff85CBCB),
+      value: value,
+      onChanged: (v) {
+        setState(() {
+          value = !value;
+        });
+      },
+      side: BorderSide(color: Colors.grey, width: 1.3),
     );
   }
 }
