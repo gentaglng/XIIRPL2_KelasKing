@@ -64,33 +64,34 @@ class BnbCourse extends StatelessWidget {
                 )
               ],
             ),
-            Search(),
+            Row(
+              children: [
+                Expanded(child: Search()),
+                Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Color(0xff85CBCB),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: () {},
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 5),
+                              child: Icon(
+                                Icons.tune,
+                                color: Colors.white,
+                              ),
+                            )))),
+              ],
+            ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Judul(txt: 'Your Course'),
-                  Padding(
-                    padding: EdgeInsets.only(right: 10),
-                    child: Ink(
-                      decoration: BoxDecoration(
-                          color: Color(0xff85CBCB),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () {},
-                        child: Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                          child: Icon(
-                            Icons.tune,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
                 ],
               ),
             ),
@@ -117,8 +118,10 @@ class BnbCourse extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => CourseDetail(
-                                              data: snapshot.data['data']
-                                                  [index])));
+                                                data: snapshot.data['data']
+                                                    [index],
+                                                img: (index + 1).toString(),
+                                              )));
                                 },
                                 child: Stack(
                                   alignment: Alignment.center,

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class TxtField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
+  final String validator;
   Icon icon;
   TxtField({
     required this.controller,
     required this.hint,
     required this.icon,
+    required this.validator,
   });
 
   @override
@@ -16,6 +18,12 @@ class TxtField extends StatelessWidget {
     return Column(
       children: [
         TextFormField(
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return validator;
+            }
+            return null;
+          },
           controller: controller,
           cursorColor: Colors.black,
           decoration: InputDecoration(
@@ -52,6 +60,12 @@ class _TxtPwState extends State<TxtPw> {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'isi password';
+        }
+        return null;
+      },
       controller: widget.controller,
       obscureText: _obscure,
       cursorColor: Colors.black,

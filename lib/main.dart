@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       create: (context) => UrlProvider(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Buang(),
+        home: AuthLogin(),
       ),
     );
   }

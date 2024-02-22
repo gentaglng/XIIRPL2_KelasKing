@@ -51,3 +51,67 @@ class Rekap extends StatelessWidget {
     );
   }
 }
+
+class Eror extends StatelessWidget {
+  final String msg;
+  var width;
+  Eror({
+    required this.msg,
+    required this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      shadowColor: Colors.transparent,
+      content: Container(
+        height: width,
+        width: width,
+        color: Colors.red,
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: ListView(
+            children: [
+              Text(
+                msg,
+                style: TextStyle(color: Colors.white),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class Warning extends StatelessWidget {
+  final String msg;
+  var width;
+  Warning({
+    required this.msg,
+    required this.width,
+  });
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      shadowColor: Colors.transparent,
+      content: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.red,
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Text(
+            msg,
+            style: TextStyle(color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+    ;
+  }
+}
