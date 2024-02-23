@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\absen_kk;
 use App\Models\course_join_kk;
 use App\Models\course_kk;
 use App\Models\user_kk;
@@ -37,16 +38,47 @@ class CourseJoinKkController extends Controller
 
     public function getAbsenToday(Request $req){
         try{
-            $coursehari = DB::table('course_join_kks')
+            $absentoday = DB::table('course_join_kks')
                             ->join('jadwal_absen_kks', 'course_join_kks.course_id', 'jadwal_absen_kks.course_id')
                             ->where('course_join_kks.user_id', $req->input('user_id'))
                             ->where('jadwal_absen_kks.hari', 'LIKE', '%' . $req->input('hari') . '%')
                             ->get();
-            $counthari = $coursehari->count();
-            if($counthari > 0){
-                return response()->json(['message'=>'Berhasil mendapatkan data', 'data'=>$coursehari]);
+            $absentodaycount = $absentoday->count();
+            if($absentodaycount > 0){
+                $sudahabsen = absen_kk::where('user_id', $req->input('user_id'))
+                            ->where('tanggal', $req->input('tanggal'))
+                            ->where('bulan', $req->input('bulan'))
+                            ->where('tahun', $req->input('tahun'))
+                            ->get();
+
+                $belumabsen = [];
+                foreach ($absentoday as $item){
+                    $found = false;
+                    foreach ($sudahabsen as $absen){
+                        if($item->course_id === $absen->course_id){
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if(!$found){
+                        $belumabsen[] = $item;
+                    }
+                }
+                $responseData = [];
+                if (empty($belumabsen)) {
+                    $responseData['message'] = 'Kamu sudah absen semua';
+                    $responseData['data'] = $sudahabsen;
+                }else if(empty($sudahabsen)){
+                    $responseData['message'] = 'Kamu belum absen semua';
+                    $responseData['data'] = $belumabsen;
+                }else{
+                    $responseData['message'] = 'Data absen kamu';
+                    $responseData['sudahabsen'] = $sudahabsen;
+                    $responseData['belumabsen'] = $belumabsen;
+                }
+                return response()->json($responseData);
             }else{
-                return response()->json(['message'=>'Tidak ada absen hari ini', 'data'=>null]);
+                return response()->json(['message'=>'Tidak ada absen hari ini']);
             }
         }catch(\Throwable $e) {
             return response()->json(['message' =>$e->getMessage()]);

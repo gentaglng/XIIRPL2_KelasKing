@@ -18,7 +18,6 @@ class CreateAbsenKksTable extends Migration
             $table->string('course_id');
             $table->string('user_id');
             $table->string('keterangan');
-            $table->string('lokasi');
             $table->string('hari');
             $table->string('tanggal');
             $table->string('bulan');
