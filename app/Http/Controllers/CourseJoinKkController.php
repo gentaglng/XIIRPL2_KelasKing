@@ -40,17 +40,20 @@ class CourseJoinKkController extends Controller
         try{
             $absentoday = DB::table('course_join_kks')
                             ->join('jadwal_absen_kks', 'course_join_kks.course_id', 'jadwal_absen_kks.course_id')
+                            ->join('course_kks', 'course_kks.id', 'course_join_kks.course_id')
+                            ->select('course_join_kks.course_id', 'course_join_kks.user_id', 'course_kks.nama')
                             ->where('course_join_kks.user_id', $req->input('user_id'))
                             ->where('jadwal_absen_kks.hari', 'LIKE', '%' . $req->input('hari') . '%')
                             ->get();
             $absentodaycount = $absentoday->count();
             if($absentodaycount > 0){
-                $sudahabsen = absen_kk::where('user_id', $req->input('user_id'))
-                            ->where('tanggal', $req->input('tanggal'))
-                            ->where('bulan', $req->input('bulan'))
-                            ->where('tahun', $req->input('tahun'))
+                $sudahabsen = DB::table('absen_kks')
+                            ->join('course_kks', 'course_kks.id', 'absen_kks.course_id')
+                            ->select('absen_kks.keterangan', 'absen_kks.waktu', 'absen_kks.course_id', 'course_kks.nama')
+                            ->where('absen_kks.tanggal', $req->input('tanggal'))
+                            ->where('absen_kks.bulan', $req->input('bulan'))
+                            ->where('absen_kks.tahun', $req->input('tahun'))
                             ->get();
-
                 $belumabsen = [];
                 foreach ($absentoday as $item){
                     $found = false;
