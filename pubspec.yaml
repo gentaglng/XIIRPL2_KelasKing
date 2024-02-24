@@ -69,6 +69,8 @@ flutter:
     - images/bg1.png
     - images/bg2.png
     - images/bg3.png
+    - images/night.png
+    - images/noon.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

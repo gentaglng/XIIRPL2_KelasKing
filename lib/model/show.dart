@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:kelas_king_apk/auth/login.dart';
 import 'package:kelas_king_apk/bnb/bnb.dart';
 import 'package:kelas_king_apk/model/bg.dart';
@@ -991,6 +992,453 @@ class _AddJadwalState extends State<AddJadwal> {
                   ],
                 )),
           ))),
+    );
+  }
+}
+
+// ignore: must_be_immutable
+class AbsenShow extends StatefulWidget {
+  final String user_id;
+  final String course_id;
+  Map data;
+  AbsenShow({
+    required this.user_id,
+    required this.course_id,
+    required this.data,
+  });
+  @override
+  State<AbsenShow> createState() => _AbsenShowState();
+}
+
+class _AbsenShowState extends State<AbsenShow> {
+  String _selectedValue = '';
+
+  void _handleRadioValueChanged(String? value) {
+    setState(() {
+      _selectedValue = value.toString();
+    });
+  }
+
+  String waktu = '';
+  String hari = '';
+  String tanggal = '';
+  String bulan = '';
+  String tahun = '';
+  @override
+  void initState() {
+    super.initState();
+    _date();
+  }
+
+  void _date() {
+    final String formattedWaktu = DateFormat('HH:mm').format(DateTime.now());
+    final String formattedHari =
+        DateFormat('EEEE', 'id_ID').format(DateTime.now());
+    final String formattedTanggal =
+        DateFormat('dd', 'id_ID').format(DateTime.now());
+    final String formattedBulan =
+        DateFormat('MMMM', 'id_ID').format(DateTime.now());
+    final String formattedTahun =
+        DateFormat('yyyy', 'id_ID').format(DateTime.now());
+
+    setState(() {
+      waktu = formattedWaktu;
+      hari = formattedHari;
+      tanggal = formattedTanggal;
+      bulan = formattedBulan;
+      tahun = formattedTahun;
+    });
+  }
+
+  String warning = '';
+
+  @override
+  Widget build(BuildContext context) {
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
+    //absen
+    Future absen(String keterangan) async {
+      try {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Wait();
+            });
+        var response =
+            await http.post(Uri.parse(currentUrl + 'api/course/absen'), body: {
+          "course_id": widget.course_id,
+          "user_id": widget.user_id,
+          "keterangan": keterangan,
+          "hari": hari,
+          "tanggal": tanggal,
+          "bulan": bulan,
+          "tahun": tahun,
+          "waktu": waktu
+        });
+        Map data = json.decode(response.body);
+        String message = data['message'];
+        if (message == 'Absen berhasil') {
+          Navigator.pop(context);
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Bnb(data: widget.data, state: 1)));
+        } else {
+          Navigator.pop(context);
+          setState(() {
+            warning = message;
+          });
+        }
+      } catch (e) {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Eror(tx: e.toString());
+            });
+      }
+    }
+
+    String date = hari + ', ' + tanggal + ' ' + bulan + ' ' + tahun;
+    var width = MediaQuery.of(context).size.width;
+    pilihabsen() {
+      if (_selectedValue == 'Masuk') {
+        return Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Color(0xffA8DEE0).withOpacity(0.3),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Text(waktu),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 6, left: 8, right: 8),
+                    child: Text(
+                      date,
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _date();
+                        absen('Masuk');
+                      });
+                    },
+                    child: Container(
+                      width: width,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xff85CBCB)),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          'Kirim',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      } else if (_selectedValue == 'Izin') {
+        return Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Color(0xffA8DEE0).withOpacity(0.3),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Text(waktu),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      date,
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 4, bottom: 8),
+                    child: Container(
+                      height: width / 1.5,
+                      width: width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.photo,
+                            size: width / 6,
+                            color: Colors.grey,
+                          ),
+                          Text(
+                            'Foto Surat Izin',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _date();
+                        absen('Izin');
+                      });
+                    },
+                    child: Container(
+                      width: width,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xff85CBCB)),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          'Kirim',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      } else if (_selectedValue == 'Sakit') {
+        return Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Color(0xffA8DEE0).withOpacity(0.3),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Text(waktu),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    child: Text(
+                      date,
+                      style: TextStyle(fontSize: 13),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 4, bottom: 8),
+                    child: Container(
+                      height: width / 1.5,
+                      width: width,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.photo,
+                            size: width / 6,
+                            color: Colors.grey,
+                          ),
+                          Text(
+                            'Foto Surat Sakit',
+                            style: TextStyle(
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _date();
+                        absen('Sakit');
+                      });
+                    },
+                    child: Container(
+                      width: width,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Color(0xff85CBCB)),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Text(
+                          'Kirim',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      } else {
+        return Warning(tx: 'Pilih absensi');
+      }
+    }
+
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        content: Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Bg(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    top: width / 15,
+                    left: width / 15,
+                    right: width / 15,
+                    bottom: (width / 15) - 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Absensi',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 4,
+                        fontSize: 20,
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(top: width / 30, bottom: width / 50),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            children: [
+                              Radio(
+                                value: 'Masuk',
+                                activeColor: Color(0xff85CBCB),
+                                groupValue: _selectedValue,
+                                onChanged: _handleRadioValueChanged,
+                                visualDensity: VisualDensity(
+                                    horizontal: VisualDensity.minimumDensity,
+                                    vertical: VisualDensity.minimumDensity),
+                              ),
+                              Text(
+                                'Masuk',
+                                style: TextStyle(fontSize: 13),
+                              )
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Radio(
+                                value: 'Izin',
+                                activeColor: Color(0xff85CBCB),
+                                groupValue: _selectedValue,
+                                onChanged: _handleRadioValueChanged,
+                                visualDensity: VisualDensity(
+                                    horizontal: VisualDensity.minimumDensity,
+                                    vertical: VisualDensity.minimumDensity),
+                              ),
+                              Text(
+                                'Izin',
+                                style: TextStyle(fontSize: 13),
+                              )
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Radio(
+                                value: 'Sakit',
+                                activeColor: Color(0xff85CBCB),
+                                groupValue: _selectedValue,
+                                onChanged: _handleRadioValueChanged,
+                                visualDensity: VisualDensity(
+                                    horizontal: VisualDensity.minimumDensity,
+                                    vertical: VisualDensity.minimumDensity),
+                              ),
+                              Text(
+                                'Sakit',
+                                style: TextStyle(fontSize: 13),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    warning == '' ? Container() : Warning(tx: warning),
+                    pilihabsen(),
+                  ],
+                ),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pop(context);
+              },
+              child: Padding(
+                padding: EdgeInsets.all(width / 30),
+                child: CircleAvatar(
+                  backgroundColor: Colors.red,
+                  radius: 13,
+                  child: Icon(
+                    Icons.close,
+                    size: 15,
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DetailSudahAbsen extends StatelessWidget {
+  const DetailSudahAbsen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
+      shadowColor: Colors.transparent,
+      content: Bg(
+          child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [Text('data')],
+      )),
     );
   }
 }
