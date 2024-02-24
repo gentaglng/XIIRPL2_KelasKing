@@ -65,12 +65,12 @@ class CourseJoinKkController extends Controller
                     }
                 }
                 $responseData = [];
-                if (empty($belumabsen)) {
-                    $responseData['message'] = 'Kamu sudah absen semua';
-                    $responseData['data'] = $sudahabsen;
-                }else if(empty($sudahabsen)){
+                if (count($sudahabsen) == 0) {
                     $responseData['message'] = 'Kamu belum absen semua';
                     $responseData['data'] = $belumabsen;
+                }else if(count($belumabsen) == 0){
+                    $responseData['message'] = 'Kamu sudah absen semua';
+                    $responseData['data'] = $sudahabsen;
                 }else{
                     $responseData['message'] = 'Data absen kamu';
                     $responseData['sudahabsen'] = $sudahabsen;
