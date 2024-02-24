@@ -34,6 +34,7 @@ Route::get('/course/pelajar/{id}', [CourseKkController::class, 'getCourseByUser'
 Route::get('/course/pengajar/{id}', [CourseKkController::class, 'getCourseByInstuctor']);
 Route::post('/course/absen/today', [CourseJoinKkController::class, 'getAbsenToday']);
 Route::post('/course/absen', [AbsenKkController::class, 'absen']);
+Route::post('/course/absen/rekap', [AbsenKkController::class, 'getAbsenRekap']);
 
 //Route::post('/materi/add', [MateriKkController::class, 'addMateri']);
 

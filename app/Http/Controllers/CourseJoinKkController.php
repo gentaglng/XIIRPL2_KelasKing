@@ -41,7 +41,7 @@ class CourseJoinKkController extends Controller
             $absentoday = DB::table('course_join_kks')
                             ->join('jadwal_absen_kks', 'course_join_kks.course_id', 'jadwal_absen_kks.course_id')
                             ->join('course_kks', 'course_kks.id', 'course_join_kks.course_id')
-                            ->select('course_join_kks.course_id', 'course_join_kks.user_id', 'course_kks.nama')
+                            ->select('course_join_kks.course_id', 'course_join_kks.user_id', 'course_kks.nama', 'jadwal_absen_kks.mulai', 'jadwal_absen_kks.selesai')
                             ->where('course_join_kks.user_id', $req->input('user_id'))
                             ->where('jadwal_absen_kks.hari', 'LIKE', '%' . $req->input('hari') . '%')
                             ->get();
