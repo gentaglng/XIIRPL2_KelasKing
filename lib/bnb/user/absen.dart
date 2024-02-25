@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:kelas_king_apk/model/container.dart';
 import 'package:kelas_king_apk/model/loading.dart';
@@ -51,6 +53,8 @@ class _UserAbsenState extends State<UserAbsen> {
       tahun = formattedTahun;
     });
   }
+
+  String pilih = '';
 
   @override
   Widget build(BuildContext context) {
@@ -215,6 +219,24 @@ class _UserAbsenState extends State<UserAbsen> {
       }
     }
 
+    //getcourse
+    Future getCourse() async {
+      try {
+        var response = await http.get(Uri.parse(currentUrl +
+            'api/course/pelajar/' +
+            widget.data['data']['id'].toString()));
+
+        return json.decode(response.body);
+      } catch (e) {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Eror(tx: e.toString());
+            });
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -295,6 +317,162 @@ class _UserAbsenState extends State<UserAbsen> {
                 }),
           ),
           Judul(tx: 'Rekap bulan ' + bulan),
+          FutureBuilder(
+              future: getCourse(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return snapshot.data['message'] ==
+                          'Course berhasil didapatkan'
+                      ? Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(right: 10),
+                              child: Container(
+                                height: width / 12,
+                                width: width,
+                                child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    itemCount: snapshot.data['data'].length,
+                                    itemBuilder: (context, index) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              pilih = snapshot.data['data']
+                                                  [index]['nama'];
+                                            });
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                color: Color(0xffF9E2AE)
+                                                    .withOpacity(0.5),
+                                                borderRadius:
+                                                    BorderRadius.circular(8)),
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 20),
+                                              child: Center(
+                                                child: Text(
+                                                  snapshot.data['data'][index]
+                                                      ['nama'],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ),
+                            pilih == ''
+                                ? Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 10,
+                                        right: 20,
+                                        left: 20,
+                                        bottom: 20),
+                                    child: Warning(tx: 'Pilih course'),
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 10),
+                                    child: Container(
+                                      width: width,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey.withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.black,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8)),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4),
+                                                  child: Text(
+                                                    'Keterangan',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 5),
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.black,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8)),
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10,
+                                                            vertical: 4),
+                                                    child: Text(
+                                                      'Waktu',
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.white),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.black,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8)),
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4),
+                                                  child: Text(
+                                                    'Tanggal',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                          ],
+                        )
+                      : Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                          child: Text(
+                            snapshot.data['message'],
+                            textAlign: TextAlign.center,
+                          ),
+                        );
+                } else {
+                  return Loading();
+                }
+              })
         ],
       ),
     );
