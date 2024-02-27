@@ -17,8 +17,6 @@ class CourseJoinKkController extends Controller
             $user = user_kk::where('id', $req->input('user_id'))->first();
             if($course == null){
                 return response()->json(['message'=>'Course tidak ditemukan']);
-            } else if($user->role == "Pengajar"){
-                return response()->json(['message'=>'Kamu bukan pelajar']);
             } else {
                 $cek = course_join_kk::where('course_id', $course->id)
                                     ->where('user_id', $user->id)
@@ -36,23 +34,23 @@ class CourseJoinKkController extends Controller
         }
     }
 
-    public function getAbsenToday(Request $req){
+    public function getAbsenStudent($user_id, $hari, $tanggal, $bulan, $tahun){
         try{
             $absentoday = DB::table('course_join_kks')
                             ->join('jadwal_absen_kks', 'course_join_kks.course_id', 'jadwal_absen_kks.course_id')
                             ->join('course_kks', 'course_kks.id', 'course_join_kks.course_id')
                             ->select('course_join_kks.course_id', 'course_join_kks.user_id', 'course_kks.nama', 'jadwal_absen_kks.mulai', 'jadwal_absen_kks.selesai')
-                            ->where('course_join_kks.user_id', $req->input('user_id'))
-                            ->where('jadwal_absen_kks.hari', 'LIKE', '%' . $req->input('hari') . '%')
+                            ->where('course_join_kks.user_id', $user_id)
+                            ->where('jadwal_absen_kks.hari', 'LIKE', '%' . $hari . '%')
                             ->get();
             $absentodaycount = $absentoday->count();
             if($absentodaycount > 0){
                 $sudahabsen = DB::table('absen_kks')
                             ->join('course_kks', 'course_kks.id', 'absen_kks.course_id')
                             ->select('absen_kks.keterangan', 'absen_kks.waktu', 'absen_kks.course_id', 'course_kks.nama')
-                            ->where('absen_kks.tanggal', $req->input('tanggal'))
-                            ->where('absen_kks.bulan', $req->input('bulan'))
-                            ->where('absen_kks.tahun', $req->input('tahun'))
+                            ->where('absen_kks.tanggal', $tanggal)
+                            ->where('absen_kks.bulan', $bulan)
+                            ->where('absen_kks.tahun', $tahun)
                             ->get();
                 $belumabsen = [];
                 foreach ($absentoday as $item){

@@ -17,12 +17,11 @@ class JadwalAbsenKkController extends Controller
             $cm = Carbon::createFromFormat('H:i', $mulai);
             $cs = Carbon::createFromFormat('H:i', $selesai);
             if($cm->greaterThan($cs)){
-                return response()->json(["message"=>"Format waktu salah", 'data'=>null]);
+                return response()->json(["message"=>"Format waktu salah"]);
             }else{
                 $data = jadwal_absen_kk::create($input);
                 return response()->json(["message"=>"Jadwal absen berhasil dibuat", 'data'=>$data]);
             }
-            
         }catch(\Throwable $e) {
             return response()->json(['message' =>$e->getMessage()]);
         }

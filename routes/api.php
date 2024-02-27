@@ -28,13 +28,20 @@ Route::post('/register', [UserKkController::class, 'register']);
 Route::post('/login', [UserKkController::class, 'login']);
 
 Route::post('/course/add', [CourseKkController::class, 'addCourse']);
-Route::post('/course/absen/add', [JadwalAbsenKkController::class, 'addJadwalAbsen']);
 Route::post('/course/join', [CourseJoinKkController::class, 'joinCourse']);
-Route::get('/course/pelajar/{id}', [CourseKkController::class, 'getCourseByUser']);
-Route::get('/course/pengajar/{id}', [CourseKkController::class, 'getCourseByInstuctor']);
-Route::post('/course/absen/today', [CourseJoinKkController::class, 'getAbsenToday']);
-Route::post('/course/absen', [AbsenKkController::class, 'absen']);
-Route::post('/course/absen/rekap', [AbsenKkController::class, 'getAbsenRekap']);
 
-//Route::post('/materi/add', [MateriKkController::class, 'addMateri']);
+Route::get('/course/pelajar/{id}', [CourseKkController::class, 'getCourseByStudent']);
+Route::get('/materi/{course_id}', [MateriKkController::class, 'getMateri']);
 
+
+Route::get('/absen/pelajar/{user_id}/{hari}/{tanggal}/{bulan}/{tahun}', [CourseJoinKkController::class, 'getAbsenStudent']);
+Route::get('/absen/rekap/pelajar/{bulan}/{id}', [AbsenKkController::class, 'getRekapAbsenStudent']);
+Route::post('/absen/today', [AbsenKkController::class, 'absenToday']);
+
+
+
+Route::get('/course/pengajar/{id}', [CourseKkController::class, 'getCourseByTeacher']);
+Route::post('/absen/add', [JadwalAbsenKkController::class, 'addJadwalAbsen']);
+Route::get('/absen/pengajar/{id}', [AbsenKkController::class, 'getAbsenbyTeacher']);
+Route::get('/absen/rekap/pengajar/{id}', [AbsenKkController::class, 'getRekapAbsenTeacher']);
+Route::post('/materi/add', [MateriKkController::class, 'addMateri']);

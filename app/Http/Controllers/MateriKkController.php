@@ -10,17 +10,29 @@ class MateriKkController extends Controller
     public function addMateri(Request $req){
         try{
             $judul = materi_kk::where('judul', $req->input('judul'))
-                                ->where('course_id', $req->input('course_id'))
-                                ->count();
-            if($req->input('role') == 'Pelajar'){
-                return response()->json(['message'=>'Kamu bukan pengajar']);
-            }else if($judul > 0){
-                return response()->json(['message'=>'Materi sudah ada']);
-            }
-            else{
+                                ->get();
+            $count = $judul->count();
+            if($count > 0){
+                return response()->json(['message'=>'Judul yang sama sudah ada']);
+            }else{
                 $input = $req->all();
-                materi_kk::create($input);
-                return response()->json(['message'=>'Materi berhasil ditambahkan']);
+                $data = materi_kk::create($input);
+                return response()->json(['message'=>'Berhasil menambahkan materi', 'data'=>$data]);
+            }
+        }catch(\Throwable $e) {
+            return response()->json(['message' =>$e->getMessage()]);
+        }
+    }
+
+    public function getMateri($course_id){
+        try{
+            $data = materi_kk::where('course_id', $course_id)
+                            ->get();
+            $datacount = $data->count();
+            if($datacount > 0){
+                return response()->json(['message'=>'Berhasil mendapatkan data', 'data'=>$data]);
+            }else{
+                return response()->json(['message'=>'Belum ada materi di course ini']);
             }
         }catch(\Throwable $e) {
             return response()->json(['message' =>$e->getMessage()]);

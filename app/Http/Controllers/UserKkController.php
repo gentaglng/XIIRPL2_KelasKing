@@ -26,7 +26,7 @@ class UserKkController extends Controller
                 return response()->json(['message'=>'Register berhasil', 'data'=>$user]);
             }
         }catch(\Throwable $e){
-            return response()->json(['eror' =>$e->getMessage()]);
+            return response()->json(['message' =>$e->getMessage()]);
         }
     }
 
@@ -39,7 +39,7 @@ class UserKkController extends Controller
                 return response()->json(['message' => 'Email atau password salah']);
             }
         } catch(\Throwable $e) {
-            return response()->json(['eror' =>$e->getMessage()]);
+            return response()->json(['message' =>$e->getMessage()]);
         }
     }
 }

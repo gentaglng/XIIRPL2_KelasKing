@@ -17,21 +17,9 @@ class CreateMateriKksTable extends Migration
             $table->id();
             $table->string('course_id');
             $table->string('judul');
-            $table->string('sub_judul_1')->default('no');
-            $table->string('link_materi_1')->default('no');
-            $table->text('deskripsi_1')->default('no');
-            $table->string('sub_judul_2')->default('no');
-            $table->string('link_materi_2')->default('no');
-            $table->text('deskripsi_2')->default('no');
-            $table->string('sub_judul_3')->default('no');
-            $table->string('link_materi_3')->default('no');
-            $table->text('deskripsi_3')->default('no');
-            $table->string('sub_judul_4')->default('no');
-            $table->string('link_materi_4')->default('no');
-            $table->text('deskripsi_4')->default('no');
-            $table->string('sub_judul_5')->default('no');
-            $table->string('link_materi_5')->default('no');
-            $table->text('deskripsi_5')->default('no');
+            $table->text('deskripsi');
+            $table->text('tautan')->default('no');
+            $table->string('foto')->default('no');
             $table->timestamps();
         });
     }
