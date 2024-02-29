@@ -15,7 +15,7 @@ class TCourse extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var width = MediaQuery.of(context).size.width;
+    //var width = MediaQuery.of(context).size.width;
     var urlProvider = Provider.of<UrlProvider>(context);
     var currentUrl = urlProvider.url;
 
