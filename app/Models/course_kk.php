@@ -19,9 +19,13 @@ class course_kk extends Model
     {
         parent::boot();
 
+        // static::creating(function ($course) {
+        //     $course->id = \Illuminate\Support\Str::uuid()->toString();
+        // });
         static::creating(function ($course) {
-            $course->id = \Illuminate\Support\Str::uuid()->toString();
-        });
+            $uuid = \Illuminate\Support\Str::uuid()->toString();
+            $course->id = strtoupper(substr($uuid, 0, 8));
+        });      
 
         static::saving(function ($model) {
             if (empty($model->absen)) {

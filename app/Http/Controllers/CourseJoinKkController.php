@@ -85,4 +85,21 @@ class CourseJoinKkController extends Controller
             return response()->json(['message' =>$e->getMessage()]);
         }
     }
+
+    public function getCourseMember($course_id){
+        try{
+            $data = DB::table('course_join_kks')->join('user_kks','course_join_kks.user_id', 'user_kks.id')
+                                ->select('user_kks.nama', 'user_kks.email')
+                                ->where('course_join_kks.course_id', $course_id)
+                                ->get();
+            $count = $data->count();
+            if($count > 0){
+                return response()->json(['message'=>'Berhasil mendapatkan data', 'data'=>$data]);
+            }else{
+                return response()->json(['message'=>'Belum ada orang yang bergabung']);
+            }
+        }catch(\Throwable $e) {
+            return response()->json(['message' =>$e->getMessage()]);
+        }             
+    }
 }

@@ -41,7 +41,9 @@ Route::post('/absen/today', [AbsenKkController::class, 'absenToday']);
 
 
 Route::get('/course/pengajar/{id}', [CourseKkController::class, 'getCourseByTeacher']);
+Route::get('/course/member/{course_id}', [CourseJoinKkController::class, 'getCourseMember']);
 Route::post('/absen/add', [JadwalAbsenKkController::class, 'addJadwalAbsen']);
+Route::post('/absen/add/late', [JadwalAbsenKkController::class, 'addJadwalAbsenLate']);
 Route::get('/absen/pengajar/{id}', [AbsenKkController::class, 'getAbsenbyTeacher']);
 Route::get('/absen/rekap/pengajar/{id}', [AbsenKkController::class, 'getRekapAbsenTeacher']);
 Route::post('/materi/add', [MateriKkController::class, 'addMateri']);

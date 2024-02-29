@@ -10,6 +10,7 @@ class MateriKkController extends Controller
     public function addMateri(Request $req){
         try{
             $judul = materi_kk::where('judul', $req->input('judul'))
+                                ->where('course_id', $req->input('course_id'))
                                 ->get();
             $count = $judul->count();
             if($count > 0){

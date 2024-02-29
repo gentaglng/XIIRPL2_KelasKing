@@ -29,6 +29,8 @@ class CourseKkController extends Controller
     public function getCourseByStudent($id){
         try{
             $course = DB::table('course_kks')->join('course_join_kks', 'course_kks.id', 'course_join_kks.course_id')
+                                            ->join('user_kks', 'user_kks.id', 'course_kks.instructor_id')
+                                            ->select('course_join_kks.id','course_kks.nama', 'course_kks.instructor_id', 'course_kks.absen', 'course_kks.nilai', 'course_join_kks.course_id', 'course_join_kks.user_id', 'user_kks.nama AS namaguru')
                                             ->where('course_join_kks.user_id', $id)
                                             ->get();
             $count = $course->count(); 
@@ -44,7 +46,11 @@ class CourseKkController extends Controller
 
     public function getCourseByTeacher($id){
         try{
-            $course = course_kk::where('instructor_id', $id)
+            $course = DB::table('course_kks')
+                                ->leftJoin('course_join_kks', 'course_kks.id', 'course_join_kks.course_id')
+                                ->leftJoin('user_kks', 'user_kks.id', 'course_kks.instructor_id')
+                                ->select('course_join_kks.id', 'course_kks.nama', 'course_kks.instructor_id', 'course_kks.absen', 'course_kks.nilai', 'course_kks.id AS course_id', 'course_join_kks.user_id', 'user_kks.nama AS namaguru')
+                                ->where('course_kks.instructor_id', $id)
                                 ->get();
             $count = $course->count(); 
             if($count > 0){
