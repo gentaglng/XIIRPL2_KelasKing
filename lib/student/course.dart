@@ -87,6 +87,7 @@ class _CourseState extends State<Course> {
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: ContainerCourse(
+                            datauser: widget.datauser,
                             snapshot: snapshot,
                             role: "Pelajar",
                           ),

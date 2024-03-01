@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class UrlProvider extends ChangeNotifier {
-  String _url = 'http://10.212.74.92:8000/';
+  String _url = 'http://192.168.1.104:8000/';
 
   String get url => _url;
 

@@ -1,3 +1,4 @@
+import 'package:apk_kelas_king/bnb.dart';
 import 'package:apk_kelas_king/model/container.dart';
 import 'package:apk_kelas_king/model/show/absensi.dart';
 import 'package:apk_kelas_king/model/show/anggota.dart';
@@ -7,9 +8,11 @@ import '../model/other.dart';
 // ignore: must_be_immutable
 class TCourseDetail extends StatefulWidget {
   final Map datacourse;
+  final Map datauser;
   Color color;
   TCourseDetail({
     required this.datacourse,
+    required this.datauser,
     required this.color,
   });
 
@@ -17,7 +20,7 @@ class TCourseDetail extends StatefulWidget {
   State<TCourseDetail> createState() => _TCourseDetailState();
 }
 
-popup(String popup, context, datacourse) {
+popup(String popup, context, datacourse, datauser) {
   if (popup == "Anggota") {
     showDialog(
         context: context,
@@ -28,7 +31,7 @@ popup(String popup, context, datacourse) {
     showDialog(
         context: context,
         builder: (context) {
-          return PopUpAbsensi(datacourse: datacourse);
+          return PopUpAbsensi(datacourse: datacourse, datauser: datauser);
         });
   }
 }
@@ -80,25 +83,80 @@ class _TCourseDetailState extends State<TCourseDetail> {
                   ),
                   judul: "Anggota Course",
                   op: () {
-                    popup("Anggota", context, widget.datacourse);
+                    popup(
+                        "Anggota", context, widget.datacourse, widget.datauser);
                   },
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 6, bottom: 10),
-                  child: DetailItem(
-                    icon: Icon(
-                      Icons.check_circle,
-                      size: 15,
-                    ),
-                    judul: "Absensi Course",
-                    op: () {
-                      popup("Absensi", context, widget.datacourse);
-                    },
-                  ),
-                ),
+                    padding: const EdgeInsets.only(top: 6, bottom: 10),
+                    child: widget.datacourse['absen'] == 'no'
+                        ? DetailItem(
+                            icon: Icon(
+                              Icons.check_circle,
+                              size: 15,
+                            ),
+                            judul: "Buat Absensi",
+                            op: () {
+                              popup("Absensi", context, widget.datacourse,
+                                  widget.datauser);
+                            },
+                          )
+                        : DetailItem(
+                            icon: Icon(
+                              Icons.check_circle,
+                              size: 15,
+                            ),
+                            judul: "Detail absensi",
+                            op: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Bnb(
+                                          datauser: widget.datauser, idx: 1)));
+                            },
+                          )),
               ],
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Judul(txt: 'Materi'),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xff85CBCB),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    child: Text(
+                      'Buat Materi',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: widget.color,
+                  ),
+                  child: Text(
+                    'Materiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                );
+              })
         ],
       ),
     );

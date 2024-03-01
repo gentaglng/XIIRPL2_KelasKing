@@ -81,6 +81,7 @@ class TCourse extends StatelessWidget {
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: ContainerCourse(
+                            datauser: datauser,
                             snapshot: snapshot,
                             role: "Pengajar",
                           ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:apk_kelas_king/model/button.dart';
 import 'package:apk_kelas_king/model/show.dart';
+import 'package:apk_kelas_king/model/show/absensi.dart';
 import 'package:apk_kelas_king/model/txtfield.dart';
 import 'package:apk_kelas_king/setting.dart';
 import 'package:apk_kelas_king/student/absensi.dart';
@@ -101,11 +102,20 @@ class _BnbState extends State<Bnb> {
         String message = data['message'];
         if (message == 'Course berhasil dibuat') {
           Navigator.pop(context);
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      Bnb(datauser: widget.datauser, idx: 0)));
+          yesOrNO == 'Buat'
+              ? showDialog(
+                  context: context,
+                  builder: (context) {
+                    return PopUpAbsensi(
+                      datauser: widget.datauser,
+                      id: data['data']['id'].toString(),
+                    );
+                  })
+              : Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Bnb(datauser: widget.datauser, idx: 0)));
         } else {
           Navigator.pop(context);
           showDialog(

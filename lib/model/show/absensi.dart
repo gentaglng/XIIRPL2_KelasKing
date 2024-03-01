@@ -1,13 +1,24 @@
+import 'dart:convert';
+
+import 'package:apk_kelas_king/bnb.dart';
 import 'package:apk_kelas_king/model/button.dart';
 import 'package:apk_kelas_king/model/other.dart';
 import 'package:apk_kelas_king/model/show.dart';
+import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
+// ignore: must_be_immutable
 class PopUpAbsensi extends StatefulWidget {
-  final Map datacourse;
+  Map? datacourse;
+  final Map datauser;
+  String? id;
   PopUpAbsensi({
-    required this.datacourse,
+    this.datacourse,
+    required this.datauser,
+    this.id,
   });
 
   @override
@@ -53,8 +64,101 @@ class _PopUpAbsensiState extends State<PopUpAbsensi> {
 
   String minggu = '';
 
+  String warning = '';
+
   @override
   Widget build(BuildContext context) {
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
+
+    //future
+    Future addJadwalAbsenLate() async {
+      try {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Wait();
+            });
+        var response = await http
+            .post(Uri.parse(currentUrl + 'api/absen/add/late'), body: {
+          "hari": senin + selasa + rabu + kamis + jumat + sabtu + minggu,
+          "mulai": _jamstart.text + ":" + _menitstart.text,
+          "selesai": _jamend.text + ":" + _menitend.text,
+          "course_id": widget.id == null
+              ? widget.datacourse!['course_id'].toString()
+              : widget.id,
+          "absen": "yes",
+        });
+        Map data = json.decode(response.body);
+        String message = data['message'];
+        if (message == 'Jadwal absen berhasil dibuat') {
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Bnb(datauser: widget.datauser, idx: 1)));
+        } else {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (context) {
+                return Eror(txt: message);
+              });
+        }
+      } catch (e) {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Eror(txt: e.toString());
+            });
+      }
+    }
+
+    Future addJadwalAbsen() async {
+      try {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Wait();
+            });
+        var response =
+            await http.post(Uri.parse(currentUrl + 'api/absen/add'), body: {
+          "hari": senin + selasa + rabu + kamis + jumat + sabtu + minggu,
+          "mulai": _jamstart.text + ":" + _menitstart.text,
+          "selesai": _jamend.text + ":" + _menitend.text,
+          "course_id": widget.id == null
+              ? widget.datacourse!['course_id'].toString()
+              : widget.id,
+        });
+        Map data = json.decode(response.body);
+        String message = data['message'];
+        if (message == 'Jadwal absen berhasil dibuat') {
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Bnb(datauser: widget.datauser, idx: 1)));
+        } else {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (context) {
+                return Eror(txt: message);
+              });
+        }
+      } catch (e) {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Eror(txt: e.toString());
+            });
+      }
+    }
+
     return PopUp(
         title: "Buat Absensi",
         form: Form(
@@ -341,6 +445,12 @@ class _PopUpAbsensiState extends State<PopUpAbsensi> {
                     ),
                   ],
                 ),
+                Text(
+                  warning,
+                  style:
+                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
                 SizedBox(
                   height: 10,
                 ),
@@ -357,14 +467,20 @@ class _PopUpAbsensiState extends State<PopUpAbsensi> {
                               Sabtuv ||
                               Mingguv) ==
                           false) {
-                        //setstate
+                        setState(() {
+                          warning = 'pilih hari!';
+                        });
                       } else if (_jamstart.text == '' ||
                           _menitstart.text == '' ||
                           _jamend.text == '' ||
                           _menitend.text == '') {
-                        //setstate
+                        setState(() {
+                          warning = 'isi waktu!';
+                        });
                       } else {
-                        //function
+                        widget.datacourse != null
+                            ? addJadwalAbsenLate()
+                            : addJadwalAbsen();
                       }
                     })
               ],
