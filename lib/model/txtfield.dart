@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class TxtField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
-  final String validator;
+  String? validator;
   final Icon icon;
   TxtField({
     required this.controller,
     required this.hint,
     required this.icon,
-    required this.validator,
+    this.validator,
   });
 
   @override

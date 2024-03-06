@@ -39,6 +39,8 @@ class ContainerCourse extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => CourseDetail(
+                              color: color[index % color.length],
+                              datauser: datauser,
                               datacourse: snapshot.data['data'][index])))
                   : Navigator.push(
                       context,

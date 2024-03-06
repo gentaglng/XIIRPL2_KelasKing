@@ -69,6 +69,7 @@ flutter:
     - images/bgdown.png
     - images/logo.png
     - images/top.png
+    - images/topp.png
     - images/bottom.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
