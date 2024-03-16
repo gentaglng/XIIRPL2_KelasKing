@@ -6,6 +6,7 @@ import 'package:apk_kelas_king/model/null.dart';
 import 'package:apk_kelas_king/model/show.dart';
 import 'package:apk_kelas_king/model/show/absensi.dart';
 import 'package:apk_kelas_king/model/show/anggota.dart';
+import 'package:apk_kelas_king/student/materi_detail.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -68,7 +69,7 @@ class _CourseDetailState extends State<CourseDetail> {
         children: [
           BgDetilCourse(nama: widget.datacourse['nama'], color: widget.color),
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.only(top: 10, right: 10, left: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -160,6 +161,20 @@ class _CourseDetailState extends State<CourseDetail> {
             ),
           ),
           Padding(
+            padding: const EdgeInsets.only(right: 10, left: 10, bottom: 10),
+            child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff85CBCB)),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              Bnb(datauser: widget.datauser, idx: 1)));
+                },
+                child: Text('Absensi')),
+          ),
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Judul(txt: 'Materi'),
           ),
@@ -175,126 +190,143 @@ class _CourseDetailState extends State<CourseDetail> {
                           : ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
-                              itemCount: 10,
+                              itemCount: snapshot.data['data'].length,
                               itemBuilder: (context, index) {
                                 return Padding(
                                   padding: const EdgeInsets.only(bottom: 5),
-                                  child: Column(children: [
-                                    Container(
-                                      width: width,
-                                      decoration: BoxDecoration(
-                                        color: colorr[index % colorr.length],
-                                        borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(8)),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Image.asset(
-                                            'images/top.png',
-                                            fit: BoxFit.fill,
-                                            width: width,
-                                          ),
-                                          Icon(
-                                            Icons.book,
-                                            color:
-                                                Colors.black.withOpacity(0.1),
-                                          ),
-                                          Image.asset(
-                                            'images/topp.png',
-                                            fit: BoxFit.fill,
-                                            width: width,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      width: width,
-                                      decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          boxShadow: [
-                                            BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.2),
-                                                blurRadius: 1,
-                                                offset: Offset(0, 1))
-                                          ],
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  MateriDetail(
+                                                      datamateri: snapshot
+                                                          .data['data'][index],
+                                                      datauser:
+                                                          widget.datauser)));
+                                    },
+                                    child: Column(children: [
+                                      Container(
+                                        width: width,
+                                        decoration: BoxDecoration(
+                                          color: colorr[index % colorr.length],
                                           borderRadius: BorderRadius.vertical(
-                                              bottom: Radius.circular(8))),
-                                      child: Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: Row(
+                                              top: Radius.circular(8)),
+                                        ),
+                                        child: Column(
                                           children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                  color: Colors.pink,
-                                                  borderRadius:
-                                                      BorderRadius.circular(8)),
-                                              child: Padding(
-                                                padding: EdgeInsets.all(8),
-                                                child: Center(
-                                                  child: Text(
-                                                    index < 9
-                                                        ? '0' +
-                                                            (index + 1)
-                                                                .toString()
-                                                        : (index + 1)
-                                                            .toString(),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 20,
-                                                        color: Colors.white
-                                                            .withOpacity(0.9)),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 8,
-                                            ),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    'JudulJudulJudulJudulJudulJudulJudulJudulJudulJudulJudulJudulJudul',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                  Text(
-                                                    'DeskripsiDeskripsiDeskripsiDeskripsiDeskripsiDeskripsiDeskripsiDeskripsi',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: 4,
+                                            Image.asset(
+                                              'images/top.png',
+                                              fit: BoxFit.fill,
+                                              width: width,
                                             ),
                                             Icon(
-                                              Icons.assignment,
-                                              size: width / 20,
-                                              color: snapshot.data['data']
-                                                          [index]['tugas'] ==
-                                                      'no'
-                                                  ? Colors.grey
-                                                  : Colors.blue,
-                                            )
+                                              Icons.book,
+                                              color:
+                                                  Colors.black.withOpacity(0.1),
+                                            ),
+                                            Image.asset(
+                                              'images/topp.png',
+                                              fit: BoxFit.fill,
+                                              width: width,
+                                            ),
                                           ],
                                         ),
                                       ),
-                                    )
-                                  ]),
+                                      Container(
+                                        width: width,
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.2),
+                                                  blurRadius: 1,
+                                                  offset: Offset(0, 1))
+                                            ],
+                                            borderRadius: BorderRadius.vertical(
+                                                bottom: Radius.circular(8))),
+                                        child: Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.pink,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8)),
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(8),
+                                                  child: Center(
+                                                    child: Text(
+                                                      index < 9
+                                                          ? '0' +
+                                                              (index + 1)
+                                                                  .toString()
+                                                          : (index + 1)
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 20,
+                                                          color: Colors.white
+                                                              .withOpacity(
+                                                                  0.9)),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 8,
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      snapshot.data['data']
+                                                          [index]['judul'],
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                    Text(
+                                                      snapshot.data['data']
+                                                          [index]['deskripsi'],
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 4,
+                                              ),
+                                              Icon(Icons.assignment,
+                                                  size: width / 20,
+                                                  color: Colors.grey)
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ]),
+                                  ),
                                 );
                               });
                     } else {
-                      return Text('Loading');
+                      return Column(
+                        children: [
+                          CircularProgressIndicator(
+                            color: Color(0xff85CBCB),
+                          )
+                        ],
+                      );
                     }
                   })),
           SizedBox(

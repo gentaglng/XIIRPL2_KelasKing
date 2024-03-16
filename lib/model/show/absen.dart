@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apk_kelas_king/bnb.dart';
 import 'package:apk_kelas_king/model/show.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +22,10 @@ class AbsenShow extends StatefulWidget {
 }
 
 class _AbsenShowState extends State<AbsenShow> {
+  File? _image;
+
+  final _picker = ImagePicker();
+
   String _selectedValue = '';
 
   void _handleRadioValueChanged(String? value) {
@@ -91,6 +97,63 @@ class _AbsenShowState extends State<AbsenShow> {
           "waktu": waktu
         });
         Map data = json.decode(response.body);
+        String message = data['message'];
+        if (message == 'Absensi berhasil') {
+          Navigator.pop(context);
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      Bnb(datauser: widget.datauser, idx: 1)));
+        } else {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (context) {
+                return Eror(txt: message);
+              });
+        }
+      } catch (e) {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Eror(txt: e.toString());
+            });
+      }
+    }
+
+    Future _openImagePicker(ImageSource img) async {
+      final XFile? pickedImage = await _picker.pickImage(source: img);
+      if (pickedImage != null) {
+        setState(() {
+          _image = File(pickedImage.path);
+        });
+      }
+    }
+
+    Future absenFoto(String keterangan) async {
+      try {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Wait();
+            });
+        var request = http.MultipartRequest(
+            'POST', Uri.parse(currentUrl + 'api/absen/today'));
+        request.fields['course_id'] = widget.course_id;
+        request.fields['user_id'] = widget.datauser['data']['id'].toString();
+        request.fields['keterangan'] = keterangan;
+        request.fields['hari'] = hari;
+        request.fields['tanggal'] = tanggal;
+        request.fields['bulan'] = bulan;
+        request.fields['tahun'] = tahun;
+        request.fields['waktu'] = waktu;
+        request.files.add(await http.MultipartFile.fromPath(
+            keterangan == 'Izin' ? "surat_izin" : "surat_sakit", _image!.path));
+        var response = await request.send();
+        var responsed = await http.Response.fromStream(response);
+        Map data = json.decode(responsed.body);
         String message = data['message'];
         if (message == 'Absensi berhasil') {
           Navigator.pop(context);
@@ -189,37 +252,135 @@ class _AbsenShowState extends State<AbsenShow> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, bottom: 8),
-                    child: Container(
-                      height: width / 1.5,
-                      width: width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey.withOpacity(0.3),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.photo,
-                            size: width / 6,
-                            color: Colors.grey,
-                          ),
-                          Text(
-                            'Foto Surat Izin',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  contentPadding: EdgeInsets.zero,
+                                  shadowColor: Colors.transparent,
+                                  backgroundColor: Colors.transparent,
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      _openImagePicker(
+                                                          ImageSource.camera);
+                                                    },
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Color(0xff85CBCB),
+                                                      child: Icon(
+                                                        Icons.camera,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Kamera',
+                                                    style:
+                                                        TextStyle(fontSize: 13),
+                                                  )
+                                                ],
+                                              ),
+                                              Column(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      _openImagePicker(
+                                                          ImageSource.gallery);
+                                                    },
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Color(0xff85CBCB),
+                                                      child: Icon(
+                                                        Icons.photo,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Galeri',
+                                                    style:
+                                                        TextStyle(fontSize: 13),
+                                                  )
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                        },
+                        child: _image == null
+                            ? Container(
+                                height: width / 1.5,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.grey.withOpacity(0.3),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.photo,
+                                      size: width / 6,
+                                      color: Colors.grey,
+                                    ),
+                                    Text(
+                                      'Foto Surat Izin',
+                                      style: TextStyle(
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(
+                                height: width / 1.5,
+                                width: width,
+                                child: Image.file(
+                                  _image!,
+                                  fit: BoxFit.cover,
+                                ),
+                              )),
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
-                        _date();
-                        absenToday("Izin");
-                      });
+                      if (_image != null) {
+                        setState(() {
+                          _date();
+                          absenFoto("Izin");
+                        });
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Eror(txt: 'isi surat izin!');
+                            });
+                      }
                     },
                     child: Container(
                       width: width,
@@ -264,37 +425,227 @@ class _AbsenShowState extends State<AbsenShow> {
                   ),
                   Padding(
                     padding: EdgeInsets.only(top: 4, bottom: 8),
-                    child: Container(
-                      height: width / 1.5,
-                      width: width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey.withOpacity(0.3),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.photo,
-                            size: width / 6,
-                            color: Colors.grey,
-                          ),
-                          Text(
-                            'Foto Surat Sakit',
-                            style: TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: GestureDetector(
+                        onTap: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  contentPadding: EdgeInsets.zero,
+                                  shadowColor: Colors.transparent,
+                                  backgroundColor: Colors.transparent,
+                                  content: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      _openImagePicker(
+                                                          ImageSource.camera);
+                                                    },
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Color(0xff85CBCB),
+                                                      child: Icon(
+                                                        Icons.camera,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Kamera',
+                                                    style:
+                                                        TextStyle(fontSize: 13),
+                                                  )
+                                                ],
+                                              ),
+                                              Column(
+                                                children: [
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Navigator.pop(context);
+                                                      _openImagePicker(
+                                                          ImageSource.gallery);
+                                                    },
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Color(0xff85CBCB),
+                                                      child: Icon(
+                                                        Icons.photo,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    'Galeri',
+                                                    style:
+                                                        TextStyle(fontSize: 13),
+                                                  )
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              });
+                        },
+                        child: _image == null
+                            ? GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertDialog(
+                                          contentPadding: EdgeInsets.zero,
+                                          shadowColor: Colors.transparent,
+                                          backgroundColor: Colors.transparent,
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 10),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    children: [
+                                                      Column(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              _openImagePicker(
+                                                                  ImageSource
+                                                                      .camera);
+                                                            },
+                                                            child: CircleAvatar(
+                                                              backgroundColor:
+                                                                  Color(
+                                                                      0xff85CBCB),
+                                                              child: Icon(
+                                                                Icons.camera,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            'Kamera',
+                                                            style: TextStyle(
+                                                                fontSize: 13),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Column(
+                                                        children: [
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              _openImagePicker(
+                                                                  ImageSource
+                                                                      .gallery);
+                                                            },
+                                                            child: CircleAvatar(
+                                                              backgroundColor:
+                                                                  Color(
+                                                                      0xff85CBCB),
+                                                              child: Icon(
+                                                                Icons.photo,
+                                                                color: Colors
+                                                                    .white,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            'Galeri',
+                                                            style: TextStyle(
+                                                                fontSize: 13),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                },
+                                child: Container(
+                                  height: width / 1.5,
+                                  width: width,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.grey.withOpacity(0.3),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.photo,
+                                        size: width / 6,
+                                        color: Colors.grey,
+                                      ),
+                                      Text(
+                                        'Foto Surat Sakit',
+                                        style: TextStyle(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : Container(
+                                height: width / 1.5,
+                                width: width,
+                                child: Image.file(
+                                  _image!,
+                                  fit: BoxFit.cover,
+                                ),
+                              )),
                   ),
                   GestureDetector(
                     onTap: () {
-                      setState(() {
-                        _date();
-                        absenToday("Sakit");
-                      });
+                      if (_image != null) {
+                        setState(() {
+                          _date();
+                          absenFoto("Sakit");
+                        });
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Eror(txt: 'isi surat sakit!');
+                            });
+                      }
                     },
                     child: Container(
                       width: width,
@@ -409,7 +760,8 @@ class DetailAbsen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(data);
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
     return PopUp(
         title: "Detail Absensi",
         form: Padding(
@@ -508,7 +860,33 @@ class DetailAbsen extends StatelessWidget {
                     ),
                   )
                 ],
-              )
+              ),
+              data['keterangan'] == "Masuk"
+                  ? Container()
+                  : Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, bottom: 8),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Colors.green.withOpacity(0.1)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Surat',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )),
+                        ),
+                        Image.network(currentUrl +
+                            'images/' +
+                            data[data['surat_izin'] == 'no'
+                                ? 'surat_sakit'
+                                : 'surat_izin'])
+                      ],
+                    ),
             ],
           ),
         ));

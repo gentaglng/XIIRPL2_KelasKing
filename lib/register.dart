@@ -7,6 +7,7 @@ import 'package:apk_kelas_king/model/button.dart';
 import 'package:apk_kelas_king/model/show.dart';
 import 'package:apk_kelas_king/model/txt.dart';
 import 'package:apk_kelas_king/model/txtfield.dart';
+import 'package:apk_kelas_king/sk.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -210,10 +211,19 @@ class _RegisterState extends State<Register> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            'Syarat & Ketentuan',
-                                            style: TextStyle(
-                                                color: Color(0xff85CBCB)),
+                                          GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Sk()));
+                                            },
+                                            child: Text(
+                                              'Syarat & Ketentuan',
+                                              style: TextStyle(
+                                                  color: Color(0xff85CBCB)),
+                                            ),
                                           ),
                                         ],
                                       ),

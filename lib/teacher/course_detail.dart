@@ -1,15 +1,20 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:apk_kelas_king/bnb.dart';
+import 'package:apk_kelas_king/model/bg.dart';
 import 'package:apk_kelas_king/model/container.dart';
 import 'package:apk_kelas_king/model/null.dart';
 import 'package:apk_kelas_king/model/show.dart';
 import 'package:apk_kelas_king/model/show/absensi.dart';
 import 'package:apk_kelas_king/model/show/anggota.dart';
+import 'package:apk_kelas_king/model/txt.dart';
 import 'package:apk_kelas_king/model/txtfield.dart';
 import 'package:apk_kelas_king/teacher/materi_detail.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../model/button.dart';
 import '../model/other.dart';
@@ -54,6 +59,10 @@ popup(String popup, context, datacourse, datauser) {
 class _TCourseDetailState extends State<TCourseDetail> {
   @override
   Widget build(BuildContext context) {
+    void _copyToClipboard(String text) {
+      Clipboard.setData(ClipboardData(text: text));
+    }
+
     var width = MediaQuery.of(context).size.width;
     var urlProvider = Provider.of<UrlProvider>(context);
     var currentUrl = urlProvider.url;
@@ -106,7 +115,19 @@ class _TCourseDetailState extends State<TCourseDetail> {
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: DetailItem(
                     judul: "Kode Course",
-                    data: widget.datacourse['course_id'].toString(),
+                    copy: GestureDetector(
+                      onLongPress: () {
+                        _copyToClipboard(
+                            widget.datacourse['course_id'].toString());
+                        final snackBar = SnackBar(
+                          content: Text('Teks berhasil disalin'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      },
+                      child: Text(
+                        widget.datacourse['course_id'].toString(),
+                      ),
+                    ),
                     icon: Icon(
                       Icons.key,
                       size: 15,
@@ -166,151 +187,11 @@ class _TCourseDetailState extends State<TCourseDetail> {
                     showDialog(
                         context: (context),
                         builder: (context) {
-                          final _formKey = GlobalKey<FormState>();
-                          TextEditingController _judulController =
-                              TextEditingController();
-                          TextEditingController _descController =
-                              TextEditingController();
-                          TextEditingController _tautanController =
-                              TextEditingController();
-                          TextEditingController _fotoController =
-                              TextEditingController();
-                          Future addMateri() async {
-                            try {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return Wait();
-                                  });
-                              var response = await http.post(
-                                  Uri.parse(currentUrl + 'api/materi/add'),
-                                  body: {
-                                    "course_id": widget.datacourse['course_id']
-                                        .toString(),
-                                    "judul": _judulController.text,
-                                    "deskripsi": _descController.text,
-                                    "tautan": _tautanController.text == ""
-                                        ? "no"
-                                        : _tautanController.text,
-                                    "foto": _fotoController.text == ""
-                                        ? "no"
-                                        : _fotoController.text,
-                                  });
-                              Map data = json.decode(response.body);
-                              String message = data['message'];
-                              if (message == 'Berhasil menambahkan materi') {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              } else {
-                                Navigator.pop(context);
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Eror(txt: message);
-                                    });
-                              }
-                            } catch (e) {
-                              Navigator.pop(context);
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return Eror(txt: e.toString());
-                                  });
-                            }
-                          }
-
-                          return PopUp(
-                              title: "Buat Materi",
-                              form: Form(
-                                key: _formKey,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    TxtField(
-                                        controller: _judulController,
-                                        hint: "Judul",
-                                        icon: Icon(Icons.book,
-                                            color: Colors.grey),
-                                        validator: "isi judul!"),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10),
-                                      child: TextFormField(
-                                        maxLines: 3,
-                                        controller: _descController,
-                                        cursorColor: Colors.black,
-                                        decoration: InputDecoration(
-                                            prefixIcon: Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: width / 30,
-                                                    bottom: 38),
-                                                child: Icon(Icons.description,
-                                                    color: Colors.grey)),
-                                            prefixIconConstraints:
-                                                BoxConstraints(
-                                              minWidth: 0,
-                                              minHeight: 0,
-                                            ),
-                                            hintText: "Deskripsi",
-                                            focusedBorder: UnderlineInputBorder(
-                                                borderSide: BorderSide(
-                                                    color: Colors.black))),
-                                        validator: (value) {
-                                          if (value == null || value.isEmpty) {
-                                            return "isi deskripsi!";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    TxtField(
-                                      controller: _tautanController,
-                                      hint: "Link (opsional)",
-                                      icon:
-                                          Icon(Icons.link, color: Colors.grey),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 20),
-                                      child: Row(
-                                        children: [
-                                          CircleAvatar(
-                                            backgroundColor: Color(0xff85CBCB),
-                                            child: Icon(
-                                              Icons.image,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 4,
-                                          ),
-                                          Text(
-                                            'Foto (opsional)',
-                                            style: TextStyle(
-                                                color: Colors.black
-                                                    .withOpacity(0.6)),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Button(
-                                        txt: 'Buat',
-                                        color: Color(0xff85CBCB),
-                                        shadow: Color(0xffA8DEE0),
-                                        op: () async {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            addMateri();
-                                          }
-                                        }),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                  ],
-                                ),
-                              ));
+                          return Popp(
+                            datacourse: widget.datacourse,
+                            datauser: widget.datacourse,
+                            color: widget.color,
+                          );
                         });
                   },
                   child: Container(
@@ -480,7 +361,13 @@ class _TCourseDetailState extends State<TCourseDetail> {
                                 );
                               });
                     } else {
-                      return Text('Loading');
+                      return Column(
+                        children: [
+                          CircularProgressIndicator(
+                            color: Color(0xff85CBCB),
+                          )
+                        ],
+                      );
                     }
                   })),
           SizedBox(
@@ -498,13 +385,9 @@ class DetailItem extends StatelessWidget {
   final Function()? op;
   final String? data;
   final Icon? icon;
+  final Widget? copy;
 
-  DetailItem({
-    this.judul,
-    this.data,
-    this.icon,
-    this.op,
-  });
+  DetailItem({this.judul, this.data, this.icon, this.op, this.copy});
 
   @override
   Widget build(BuildContext context) {
@@ -523,7 +406,7 @@ class DetailItem extends StatelessWidget {
                       judul ?? '',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Text(data ?? ''),
+                    copy == null ? Text(data ?? '') : copy!
                   ],
                 ),
               )
@@ -547,6 +430,248 @@ class DetailItem extends StatelessWidget {
                 ),
               )
       ],
+    );
+  }
+}
+
+class Popp extends StatefulWidget {
+  final Map datacourse;
+  final Map datauser;
+  final Color color;
+  Popp({required this.datacourse, required this.datauser, required this.color});
+
+  @override
+  State<Popp> createState() => _PoppState();
+}
+
+class _PoppState extends State<Popp> {
+  File? _image;
+
+  final _picker = ImagePicker();
+
+  Future _openImagePicker(ImageSource img) async {
+    final XFile? pickedImage = await _picker.pickImage(source: img);
+    if (pickedImage != null) {
+      setState(() {
+        _image = File(pickedImage.path);
+      });
+    }
+  }
+
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _judulController = TextEditingController();
+  TextEditingController _descController = TextEditingController();
+  TextEditingController _tautanController = TextEditingController();
+  TextEditingController _fotoController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
+    Future addMateri() async {
+      try {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Wait();
+            });
+        var request = http.MultipartRequest(
+            'POST', Uri.parse(currentUrl + 'api/materi/add'));
+        request.fields["course_id"] = widget.datacourse['course_id'].toString();
+        request.fields["judul"] = _judulController.text;
+        request.fields["deskripsi"] = _descController.text;
+        request.fields["tautan"] =
+            _tautanController.text == "" ? "no" : _tautanController.text;
+        _image == null
+            ? request.fields["foto"] = "no"
+            : request.files
+                .add(await http.MultipartFile.fromPath("foto", _image!.path));
+        var response = await request.send();
+        var responsed = await http.Response.fromStream(response);
+        Map data = json.decode(responsed.body);
+        String message = data['message'];
+        if (message == "Berhasil menambahkan materi") {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TCourseDetail(
+                      datacourse: widget.datacourse,
+                      datauser: widget.datauser,
+                      color: widget.color)));
+        } else {
+          Navigator.pop(context);
+          showDialog(
+              context: context,
+              builder: (context) {
+                return Eror(txt: message);
+              });
+        }
+      } catch (e) {
+        Navigator.pop(context);
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Eror(txt: e.toString());
+            });
+      }
+    }
+
+    return AlertDialog(
+      contentPadding: EdgeInsets.zero,
+      shadowColor: Colors.transparent,
+      backgroundColor: Colors.transparent,
+      content: WillPopScope(
+          child: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              SizedBox(
+                height: width,
+                width: width,
+                child: Bg(
+                    child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: ListView(
+                    children: [
+                      TxtBg(txt: 'Buat Materi'),
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TxtField(
+                                controller: _judulController,
+                                hint: "Judul",
+                                icon: Icon(Icons.book, color: Colors.grey),
+                                validator: "isi judul!"),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: TextFormField(
+                                maxLines: 3,
+                                controller: _descController,
+                                cursorColor: Colors.black,
+                                decoration: InputDecoration(
+                                    prefixIcon: Padding(
+                                        padding: EdgeInsets.only(
+                                            right: width / 30, bottom: 38),
+                                        child: Icon(Icons.description,
+                                            color: Colors.grey)),
+                                    prefixIconConstraints: BoxConstraints(
+                                      minWidth: 0,
+                                      minHeight: 0,
+                                    ),
+                                    hintText: "Deskripsi",
+                                    focusedBorder: UnderlineInputBorder(
+                                        borderSide:
+                                            BorderSide(color: Colors.black))),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "isi deskripsi!";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            TxtField(
+                              controller: _tautanController,
+                              hint: "Link (opsional)",
+                              icon: Icon(Icons.link, color: Colors.grey),
+                            ),
+                            Padding(
+                                padding:
+                                    const EdgeInsets.only(top: 10, bottom: 20),
+                                child: _image == null
+                                    ? Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () {
+                                              _openImagePicker(
+                                                  ImageSource.gallery);
+                                            },
+                                            child: CircleAvatar(
+                                              backgroundColor:
+                                                  Color(0xff85CBCB),
+                                              child: Icon(
+                                                Icons.image,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 4,
+                                          ),
+                                          Text(
+                                            'Foto (opsional)',
+                                            style: TextStyle(
+                                                color: Colors.black
+                                                    .withOpacity(0.6)),
+                                          )
+                                        ],
+                                      )
+                                    : Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          Container(
+                                            width: width,
+                                            height: width / 2,
+                                            child: Image.file(_image!,
+                                                fit: BoxFit.cover),
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                _image = null;
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.cancel,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        ],
+                                      )),
+                            Button(
+                                txt: 'Buat',
+                                color: Color(0xff85CBCB),
+                                shadow: Color(0xffA8DEE0),
+                                op: () async {
+                                  if (_formKey.currentState!.validate()) {
+                                    addMateri();
+                                  }
+                                }),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                )),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.red,
+                    radius: 13,
+                    child: Icon(
+                      Icons.close,
+                      size: 15,
+                    ),
+                  ),
+                ),
+              )
+            ],
+          ),
+          onWillPop: () async {
+            return false;
+          }),
     );
   }
 }

@@ -57,6 +57,21 @@ class _AbsensiState extends State<Absensi> {
     var currentUrl = urlProvider.url;
 
     //future
+    Future getRekap() async {
+      try {
+        var response = await http.get(Uri.parse(currentUrl +
+            'api/absen/rekap/pelajar/' +
+            widget.datauser['data']['id'].toString()));
+        return json.decode(response.body);
+      } catch (e) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Eror(txt: e.toString());
+            });
+      }
+    }
+
     Future getAbsenStudent() async {
       try {
         var response = await http.get(
@@ -226,7 +241,6 @@ class _AbsensiState extends State<Absensi> {
             decoration:
                 BoxDecoration(color: Color(0xffA8DEE0).withOpacity(0.3)),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Image.asset('images/top.png'),
                 Padding(
@@ -241,11 +255,9 @@ class _AbsensiState extends State<Absensi> {
                               hari,
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 40),
-                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               tanggal + ' ' + bulan + ' ' + tahun,
-                              overflow: TextOverflow.ellipsis,
                             )
                           ],
                         ),
@@ -253,21 +265,123 @@ class _AbsensiState extends State<Absensi> {
                       SizedBox(
                         width: width / 5,
                       ),
-                      Container(
-                        decoration: BoxDecoration(
-                            color: Color(0xff85CBCB),
-                            borderRadius: BorderRadius.circular(8)),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 15),
-                          child: Text(
-                            "Rekap Bulan Ini",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ),
-                      )
+                      FutureBuilder(
+                          future: getRekap(),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              print(snapshot.data);
+                              return Expanded(
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: Colors.green,
+                                          radius: width / 60,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text('Hadir'),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: Colors.transparent,
+                                          radius: width / 60,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            snapshot.data['masuk'].toString(),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: Colors.yellow,
+                                          radius: width / 60,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text('Izin'),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: Colors.transparent,
+                                          radius: width / 60,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            snapshot.data['izin'].toString(),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: Colors.red,
+                                          radius: width / 60,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Text('Sakit'),
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundColor: Colors.transparent,
+                                          radius: width / 60,
+                                        ),
+                                        SizedBox(
+                                          width: 4,
+                                        ),
+                                        Expanded(
+                                          child: Text(
+                                            snapshot.data['sakit'].toString(),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            } else {
+                              return Text('...');
+                            }
+                          })
                     ],
                   ),
                 ),
@@ -286,7 +400,16 @@ class _AbsensiState extends State<Absensi> {
                           child: DataNull(txt: snapshot.data['message']),
                         );
                 } else {
-                  return Text('Loading');
+                  return Column(
+                    children: [
+                      SizedBox(
+                        height: 50,
+                      ),
+                      CircularProgressIndicator(
+                        color: Color(0xff85CBCB),
+                      )
+                    ],
+                  );
                 }
               }),
         ],

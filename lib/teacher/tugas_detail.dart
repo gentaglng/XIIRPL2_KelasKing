@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 // ignore: must_be_immutable
 class TTugasDetail extends StatelessWidget {
   final Map datatugas;
-  TTugasDetail({required this.datatugas});
+  String idx;
+  TTugasDetail({required this.datatugas, required this.idx});
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +17,10 @@ class TTugasDetail extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         shadowColor: Colors.transparent,
+        title: Text(
+          'Tugas ' + idx,
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: Stack(
         children: [

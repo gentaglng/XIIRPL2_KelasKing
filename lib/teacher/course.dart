@@ -4,6 +4,7 @@ import 'package:apk_kelas_king/model/container.dart';
 import 'package:apk_kelas_king/model/null.dart';
 import 'package:apk_kelas_king/model/other.dart';
 import 'package:apk_kelas_king/model/show.dart';
+import 'package:apk_kelas_king/teacher/search.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -68,8 +69,9 @@ class TCourse extends StatelessWidget {
       ),
       body: ListView(
         children: [
+          Cs(),
           Padding(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
             child: Judul(txt: 'Daftar Course'),
           ),
           FutureBuilder(
@@ -80,15 +82,63 @@ class TCourse extends StatelessWidget {
                           "Course berhasil didapatkan"
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: ContainerCourse(
-                            datauser: datauser,
-                            snapshot: snapshot,
-                            role: "Pengajar",
+                          child: Column(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => Search(
+                                                datauser: datauser,
+                                              )));
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.grey.withOpacity(0.2)),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.search,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 2, right: 5),
+                                          child: Text(
+                                            '|',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                        Text('Cari course')
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              ContainerCourse(
+                                datauser: datauser,
+                                snapshot: snapshot,
+                                role: "Pengajar",
+                              ),
+                            ],
                           ),
                         )
                       : DataNull(txt: snapshot.data['message']);
                 } else {
-                  return Text('Loading');
+                  return Column(
+                    children: [
+                      CircularProgressIndicator(
+                        color: Color(0xff85CBCB),
+                      )
+                    ],
+                  );
                 }
               })),
           SizedBox(

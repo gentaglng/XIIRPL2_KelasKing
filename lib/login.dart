@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:apk_kelas_king/bnb.dart';
+import 'package:apk_kelas_king/fp.dart';
 import 'package:apk_kelas_king/model/bg.dart';
 import 'package:apk_kelas_king/model/button.dart';
 import 'package:apk_kelas_king/model/show.dart';
@@ -124,7 +125,23 @@ class Login extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: [
                                   GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        _emailController.text == ''
+                                            ? showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return Eror(
+                                                      txt: 'isi email!');
+                                                })
+                                            : Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => Fp(
+                                                          email:
+                                                              _emailController
+                                                                  .text,
+                                                        )));
+                                      },
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 20),

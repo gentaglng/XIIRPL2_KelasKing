@@ -11,7 +11,7 @@ import 'package:provider/provider.dart';
 class TAbsensi extends StatelessWidget {
   final Map datauser;
   TAbsensi({required this.datauser});
-
+  int counter = 0;
   @override
   Widget build(BuildContext context) {
     var urlProvider = Provider.of<UrlProvider>(context);
@@ -26,6 +26,38 @@ class TAbsensi extends StatelessWidget {
               datauser['data']['id'].toString()),
         );
         return json.decode(response.body);
+      } catch (e) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return Eror(txt: e.toString());
+            });
+      }
+    }
+
+    Future getDetail(String id) async {
+      try {
+        var response = await http.get(
+          Uri.parse(currentUrl + 'api/absen/rekap/pengajar/detail/' + id),
+        );
+        Map data = json.decode(response.body);
+        String msg = data['message'];
+        if (msg == 'Data berhasil didapatkan') {
+          List dataa = data['data']
+            ..map((item) => {
+                  'id': item['id'].toString(),
+                  'nama': item['nama'],
+                  'keterangan': item['keterangan'],
+                  'tanggal':
+                      '${item['hari']}, ${item['tanggal']} ${item['bulan']} ${item['tahun']}',
+                  'waktu': item['waktu'],
+                  'surat_izin': item['surat_izin'],
+                  'surat_sakit': item['surat_sakit']
+                }).toList();
+          return dataa;
+        } else {
+          return data['message'];
+        }
       } catch (e) {
         showDialog(
             context: context,
@@ -78,7 +110,7 @@ class TAbsensi extends StatelessWidget {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return snapshot.data['message'] ==
-                              "Berhasil mendapatkan data"
+                              "Data berhasil didapatkan"
                           ? ListView.builder(
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
@@ -137,6 +169,9 @@ class TAbsensi extends StatelessWidget {
                                                           fontSize: 20),
                                                     ),
                                                     Text(hariFormatted),
+                                                    SizedBox(
+                                                      height: 10,
+                                                    ),
                                                     Text(
                                                       jam,
                                                       style: TextStyle(
@@ -169,49 +204,83 @@ class TAbsensi extends StatelessWidget {
                                                                 SizedBox(
                                                                   height: 8,
                                                                 ),
-                                                                SingleChildScrollView(
-                                                                  scrollDirection:
-                                                                      Axis.horizontal,
-                                                                  child: DataTable(
-                                                                      headingRowColor:
-                                                                          MaterialStateColor.resolveWith((states) =>
-                                                                              Color(0xffA8DEE0)),
-                                                                      columns: [
-                                                                        DataColumn(
-                                                                          label:
-                                                                              Text('No'),
-                                                                        ),
-                                                                        DataColumn(
-                                                                            label:
-                                                                                Text('Nama Pelajar')),
-                                                                        DataColumn(
-                                                                            label:
-                                                                                Text('Keterangan')),
-                                                                        DataColumn(
-                                                                            label:
-                                                                                Text('Tanggal')),
-                                                                        DataColumn(
-                                                                            label:
-                                                                                Text('Waktu')),
-                                                                        DataColumn(
-                                                                            label:
-                                                                                Text('Lain-lain')),
-                                                                      ],
-                                                                      rows: [
-                                                                        DataRow(
-                                                                            cells: [
-                                                                              DataCell(Text(
-                                                                                'data',
-                                                                                style: TextStyle(fontWeight: FontWeight.bold),
-                                                                              )),
-                                                                              DataCell(Text('data')),
-                                                                              DataCell(Text('data')),
-                                                                              DataCell(Text('data')),
-                                                                              DataCell(Text('data')),
-                                                                              DataCell(Text('data')),
-                                                                            ]),
-                                                                      ]),
-                                                                ),
+                                                                FutureBuilder(
+                                                                    future: getDetail(snapshot
+                                                                        .data[
+                                                                            'data']
+                                                                            [
+                                                                            index]
+                                                                            [
+                                                                            'id']
+                                                                        .toString()),
+                                                                    builder:
+                                                                        (context,
+                                                                            snapshott) {
+                                                                      if (snapshott
+                                                                          .hasData) {
+                                                                        return snapshott.data ==
+                                                                                "Belum ada pelajar yang melakukan absensi"
+                                                                            ? DataNull(txt: snapshott.data)
+                                                                            : SingleChildScrollView(
+                                                                                scrollDirection: Axis.horizontal,
+                                                                                child: DataTable(
+                                                                                  headingRowColor: MaterialStateColor.resolveWith((states) => Color(0xffA8DEE0)),
+                                                                                  columns: [
+                                                                                    DataColumn(
+                                                                                      label: Text('No'),
+                                                                                    ),
+                                                                                    DataColumn(label: Text('Nama Pelajar')),
+                                                                                    DataColumn(label: Text('Keterangan')),
+                                                                                    DataColumn(label: Text('Tanggal')),
+                                                                                    DataColumn(label: Text('Waktu')),
+                                                                                    DataColumn(label: Text('Lain-lain')),
+                                                                                  ],
+                                                                                  rows: snapshott.data.map<DataRow>((rowData) {
+                                                                                    int index = snapshott.data.indexOf(rowData);
+
+                                                                                    return DataRow(cells: [
+                                                                                      DataCell(Text((index + 1).toString(), style: TextStyle(fontWeight: FontWeight.bold))),
+                                                                                      DataCell(Text(rowData['nama']! + ' (' + rowData['id'].toString() + ')')),
+                                                                                      DataCell(Text(rowData['keterangan']!)),
+                                                                                      DataCell(Text('${rowData['hari']}, ${rowData['tanggal']} ${rowData['bulan']} ${rowData['tahun']}')),
+                                                                                      DataCell(Text(rowData['waktu']!)),
+                                                                                      DataCell(rowData['surat_izin'] != 'no' || rowData['surat_sakit'] != 'no'
+                                                                                          ? GestureDetector(
+                                                                                              onTap: () {
+                                                                                                showDialog(
+                                                                                                    context: context,
+                                                                                                    builder: (context) {
+                                                                                                      String ft = snapshott.data[index]['surat_izin'] == 'no' ? snapshott.data[index]['surat_sakit'] : snapshott.data[index]['surat_izin'];
+                                                                                                      return PopUp(
+                                                                                                          title: "Surat",
+                                                                                                          form: Padding(
+                                                                                                            padding: const EdgeInsets.only(top: 10),
+                                                                                                            child: Image.network(
+                                                                                                              currentUrl + 'images/' + ft,
+                                                                                                            ),
+                                                                                                          ));
+                                                                                                    });
+                                                                                              },
+                                                                                              child: Text(
+                                                                                                'Surat',
+                                                                                                style: TextStyle(color: Colors.blue),
+                                                                                              ),
+                                                                                            )
+                                                                                          : Text('-')),
+                                                                                    ]);
+                                                                                  }).toList(),
+                                                                                ),
+                                                                              );
+                                                                      } else {
+                                                                        return Column(
+                                                                          children: [
+                                                                            CircularProgressIndicator(
+                                                                              color: Color(0xff85CBCB),
+                                                                            )
+                                                                          ],
+                                                                        );
+                                                                      }
+                                                                    })
                                                               ],
                                                             ));
                                                       });
@@ -251,7 +320,16 @@ class TAbsensi extends StatelessWidget {
                               child: DataNull(txt: snapshot.data['message']),
                             );
                     } else {
-                      return Text('Loading');
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 50,
+                          ),
+                          CircularProgressIndicator(
+                            color: Color(0xff85CBCB),
+                          )
+                        ],
+                      );
                     }
                   }))
         ],
