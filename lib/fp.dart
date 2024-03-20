@@ -1,16 +1,10 @@
-import 'dart:convert';
-
-import 'package:apk_kelas_king/bnb.dart';
 import 'package:apk_kelas_king/model/bg.dart';
 import 'package:apk_kelas_king/model/button.dart';
-import 'package:apk_kelas_king/model/show.dart';
 import 'package:apk_kelas_king/model/txt.dart';
 import 'package:apk_kelas_king/model/txtfield.dart';
-import 'package:apk_kelas_king/register.dart';
-import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
+//import 'package:provider/provider.dart';
+//import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class Fp extends StatelessWidget {
@@ -26,8 +20,8 @@ class Fp extends StatelessWidget {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
-    var urlProvider = Provider.of<UrlProvider>(context);
-    var currentUrl = urlProvider.url;
+    //var urlProvider = Provider.of<UrlProvider>(context);
+    //var currentUrl = urlProvider.url;
 
     //future
 

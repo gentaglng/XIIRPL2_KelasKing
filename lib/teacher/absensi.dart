@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class TAbsensi extends StatelessWidget {
   final Map datauser;
   TAbsensi({required this.datauser});

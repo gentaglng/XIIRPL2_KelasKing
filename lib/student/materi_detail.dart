@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'package:apk_kelas_king/bnb.dart';
 import 'package:apk_kelas_king/model/null.dart';
 import 'package:apk_kelas_king/model/other.dart';
 import 'package:apk_kelas_king/model/show.dart';
 import 'package:apk_kelas_king/student/tugas_detail.dart';
-import 'package:apk_kelas_king/teacher/tugas_detail.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;

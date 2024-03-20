@@ -18,6 +18,7 @@ class Tugas extends StatefulWidget {
 
 class _TugasState extends State<Tugas> {
   String namacourse = '';
+  String idc = '';
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -45,7 +46,7 @@ class _TugasState extends State<Tugas> {
     Future getCourseByCourse() async {
       try {
         var response = await http.get(
-          Uri.parse(currentUrl + 'api/tugas/pelajar/nama/$namacourse'),
+          Uri.parse(currentUrl + 'api/tugas/pelajar/nama/' + idc),
         );
         return json.decode(response.body);
       } catch (e) {
@@ -113,6 +114,9 @@ class _TugasState extends State<Tugas> {
                                             setState(() {
                                               namacourse = snapshot.data['data']
                                                   [index]['nama'];
+                                              idc = snapshot.data['data'][index]
+                                                      ['course_id']
+                                                  .toString();
                                             });
                                           },
                                           child: Container(

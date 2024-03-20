@@ -518,7 +518,18 @@ class _TugasDetailState extends State<TugasDetail> {
                     ],
                   );
                 } else {
-                  return Text('data');
+                  return Center(
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 40,
+                        ),
+                        CircularProgressIndicator(
+                          color: Color(0xff85CBCB),
+                        )
+                      ],
+                    ),
+                  );
                 }
               })
         ],

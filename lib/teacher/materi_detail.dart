@@ -5,13 +5,12 @@ import 'package:apk_kelas_king/model/button.dart';
 import 'package:apk_kelas_king/model/null.dart';
 import 'package:apk_kelas_king/model/other.dart';
 import 'package:apk_kelas_king/model/show.dart';
-import 'package:apk_kelas_king/model/txtfield.dart';
 import 'package:apk_kelas_king/teacher/tugas_detail.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TMateriDetail extends StatefulWidget {
   final Map datamateri;
@@ -51,10 +50,10 @@ class _TMateriDetailState extends State<TMateriDetail> {
       }
     }
 
-    // Future launchurl() async {
-    //   await launchUrl(Uri.parse(widget.datamateri['tautan']),
-    //       mode: LaunchMode.externalApplication);
-    // }
+    Future launchurl() async {
+      await launchUrl(Uri.parse(widget.datamateri['tautan']),
+          mode: LaunchMode.externalApplication);
+    }
 
     return Scaffold(
         appBar: AppBar(
@@ -327,7 +326,7 @@ class _TMateriDetailState extends State<TMateriDetail> {
                                                               ),
                                                               GestureDetector(
                                                                 onTap: () {
-                                                                  //launchurl();
+                                                                  launchurl();
                                                                 },
                                                                 child:
                                                                     Container(

@@ -1,6 +1,8 @@
+import 'package:apk_kelas_king/url.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Judul extends StatelessWidget {
   final String txt;
@@ -36,27 +38,27 @@ class Cs extends StatefulWidget {
 }
 
 class _CsState extends State<Cs> {
-  final List<Widget> carousel = [
-    Padding(
-      padding: const EdgeInsets.all(10),
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.red, borderRadius: BorderRadius.circular(10)),
-      ),
-    ),
-    Padding(
-      padding: const EdgeInsets.all(10),
-      child: Container(
-        decoration: BoxDecoration(
-            color: Colors.yellow, borderRadius: BorderRadius.circular(10)),
-      ),
-    ),
-  ];
-
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
+    var urlProvider = Provider.of<UrlProvider>(context);
+    var currentUrl = urlProvider.url;
+    final List<Widget> foto = List.generate(5, (index) {
+      return Padding(
+        padding: const EdgeInsets.all(10),
+        child: Container(
+          width: width,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.network(
+              currentUrl + 'images/' + (index + 1).toString() + '.png',
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      );
+    });
     return Stack(
       children: [
         Column(
@@ -70,7 +72,7 @@ class _CsState extends State<Cs> {
                 color: Colors.black.withOpacity(0.1),
                 activeColor: Colors.black.withOpacity(0.7),
               ),
-              dotsCount: carousel.length,
+              dotsCount: foto.length,
               position: currentIndex,
             ),
           ],
@@ -79,7 +81,7 @@ class _CsState extends State<Cs> {
           options: CarouselOptions(
             height: width / 2,
             autoPlay: true,
-            aspectRatio: 2 / 1,
+            aspectRatio: 5 / 5,
             autoPlayAnimationDuration: Duration(milliseconds: 700),
             viewportFraction: 1,
             onPageChanged: (index, reason) {
@@ -88,7 +90,7 @@ class _CsState extends State<Cs> {
               });
             },
           ),
-          items: carousel,
+          items: foto,
         ),
       ],
     );

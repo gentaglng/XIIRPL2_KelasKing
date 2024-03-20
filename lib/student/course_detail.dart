@@ -4,8 +4,6 @@ import 'package:apk_kelas_king/bnb.dart';
 import 'package:apk_kelas_king/model/container.dart';
 import 'package:apk_kelas_king/model/null.dart';
 import 'package:apk_kelas_king/model/show.dart';
-import 'package:apk_kelas_king/model/show/absensi.dart';
-import 'package:apk_kelas_king/model/show/anggota.dart';
 import 'package:apk_kelas_king/student/materi_detail.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';

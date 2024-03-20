@@ -1,5 +1,4 @@
 import 'package:apk_kelas_king/splash.dart';
-import 'package:apk_kelas_king/tes.dart';
 import 'package:apk_kelas_king/url.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';

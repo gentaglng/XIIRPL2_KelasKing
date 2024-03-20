@@ -29,7 +29,6 @@ class _SearchState extends State<PSearch> {
   @override
   Widget build(BuildContext context) {
     print(_searchController.text);
-    var width = MediaQuery.of(context).size.width;
     var urlProvider = Provider.of<UrlProvider>(context);
     var currentUrl = urlProvider.url;
 

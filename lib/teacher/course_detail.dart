@@ -462,7 +462,6 @@ class _PoppState extends State<Popp> {
   TextEditingController _judulController = TextEditingController();
   TextEditingController _descController = TextEditingController();
   TextEditingController _tautanController = TextEditingController();
-  TextEditingController _fotoController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
